@@ -1,0 +1,25 @@
+.card-grid__item__img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-grid__item__img:hover {
+    transform: scale(1.05);
+}
+
+.card-grid__item__img--hidden {
+    filter:opacity(0);
+}
+
+.card-grid__item__img--revealed {
+    display: unset;
+}
+
+.card-grid__item__img--matched {
+    display: unset;
+    filter: grayscale(100%);
+}
