@@ -31,6 +31,12 @@ const Game: React.FC<Props> = ({ setActivePanel }) => {
     shuffleArray(newImages);
     setImages(newImages);
     setCardStates(newImages.map((image) => "hidden"));
+    setTimeout(() => {
+      setCardStates(newImages.map((image) => "revealed"));
+    }, 1000)
+    setTimeout(() => {
+      setCardStates(newImages.map((image) => "hidden"));
+    }, 2300)
     setCardsLeft(newImages.length);
   }, []);
 
