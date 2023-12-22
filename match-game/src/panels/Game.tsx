@@ -52,7 +52,9 @@ const Game: React.FC<Props> = ({ setActivePanel }) => {
         newCardStates[flippedCardsIndices[1]] = "matched";
         setCardStates(newCardStates);
         if (cardsLeft === 2) {
+          setTimeout(() => {
           setActivePanel('final');
+          }, 200);
         }
         setCardsLeft(cardsLeft - 2);
       } else {
@@ -105,10 +107,15 @@ const fetchImages = () => {
   //   const json = await response.json();
   //   images = json.images;
   // } else {
+
+  // the number of images should be a multiple of 3
   return [
     "https://akademiarechi.ru/wp-content/uploads/2020/08/0bdd462fe4-e1597658368461.jpg",
     "https://avatars.mds.yandex.net/get-games/3006389/2a0000017d6159e953a1ca0f8267b591a6b5/orig",
     "https://www.igrotime.ru/upload/t/800-700im/albums/7944/11696856-3.jpg",
+    "https://igro-mama.ru/wp-content/uploads/2019/07/Najdi-paru.jpg",
+    "https://i.pcmag.com/imagery/reviews/02ibIXDUJNJ3V7KL8jhUNFf-7..v1569480464.png",
+    "https://upload.wikimedia.org/wikipedia/commons/b/b8/UTP_Cat_6.jpg",
   ];
   // }
 };
