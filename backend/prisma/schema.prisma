@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  games Game[]
+}
+
+enum GameType {
+  CARDS
+  MATCHCARDS
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  gameType   GameType
+  cards      Card[]
+  matchCards MatchCard[]
+
+  theme   Theme? @relation(fields: [themeId], references: [id])
+  themeId Int?
+
+  subject String // тематика
+
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+}
+
+model Card {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String
+
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+}
+
+model MatchCard {
+  id Int @id @default(autoincrement())
+
+  imageSrc String
+
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+}
+
+model Theme {
+  id Int @id @default(autoincrement())
+
+  fillType      FillType
+  color         String
+  gradientColor String?
+  accentColor   String
+
+  games Game[]
+}
+
+enum FillType {
+  SOLID
+  GRADIENT
+}
