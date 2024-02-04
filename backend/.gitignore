@@ -1,3 +1,13 @@
-node_modules
-# Keep environment variables out of version control
-.env
+.vercel
+*.log
+*.pyc
+__pycache__
+
+# Environments 
+.env 
+.venv 
+env/ 
+venv/ 
+ENV/ 
+env.bak/ 
+venv.bak/
