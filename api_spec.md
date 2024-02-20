@@ -6,7 +6,7 @@ Request: GET /test
 
 Response: Любой JSON
 
-## Создание игры
+### Создание игры
 
 Request: POST /game
 
