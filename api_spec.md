@@ -39,7 +39,7 @@ Request body:
 
     // auth
     vk_id: string,
-    sign: string,
+    sign: string
 }
 ```
 
@@ -52,5 +52,47 @@ Response body:
 } | {
     status: "ERROR",
     error_message: string
+}
+```
+
+### Получение данных об игре
+
+Request: GET /game
+
+Request body:
+
+```ts
+{
+  game_id: number;
+}
+```
+
+Response body:
+
+```ts
+{
+    status: "ERROR",
+    error_message: string
+} | {
+    status: "SUCCESS",
+    logo: string,
+    background: number,
+    game_type: "CARDS" | "MATCHCARDS",
+    cards?: {
+        name: string,
+        description: string
+    }[],
+    match_cards?: {
+        image_src: string,
+        name: string,
+        description: string
+    }[],
+    theme?: {
+        filltype: "SOLID" | "GRADIENT",
+        color: string,
+        gradient_color?: string,
+        accent_color: string
+    },
+    subject: string
 }
 ```
