@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -13,48 +13,48 @@ def about():
     return "About"
 
 
-@app.route("/user/create", methods=["POST"])
-async def create_user(request: Request):
-    user_id = request.headers.get("user_id")
+# @app.route("/user/create", methods=["POST"])
+# async def create_user(request: Request):
+#     user_id = request.headers.get("user_id")
 
-    db = Prisma()
-    await db.connect()
+#     db = Prisma()
+#     await db.connect()
 
-    try:
-        user = await db.user.create({"id": user_id})
-        result = {"status": "ok", "user_id": user.id}
+#     try:
+#         user = await db.user.create({"id": user_id})
+#         result = {"status": "ok", "user_id": user.id}
 
-    except:
-        result = {"status": "error", "user": None}
+#     except:
+#         result = {"status": "error", "user": None}
 
-    finally:
-        await db.disconnect()
-        return result
+#     finally:
+#         await db.disconnect()
+#         return result
 
 
-@app.route("/game/create")
-async def create_game(request: Request):
+# @app.route("/game/create")
+# async def create_game(request: Request):
+#     game_id = request.headers.get("id")
+
+#     db = Prisma()
+#     await db.connect()
+
+#     try:
+#         user = await db.game.create({"id": game_id})
+#         result = {"status": "ok", "user_id": user.id}
+
+#     except:
+#         result = {"status": "error", "user": None}
+
+#     finally:
+#         await db.disconnect()
+#         return result
+
+
+@app.route("/game/get", methods=["GET"])
+async def get_game():
     game_id = request.headers.get("id")
-
-    db = Prisma()
-    await db.connect()
-
-    try:
-        user = await db.game.create({"id": game_id})
-        result = {"status": "ok", "user_id": user.id}
-
-    except:
-        result = {"status": "error", "user": None}
-
-    finally:
-        await db.disconnect()
-        return result
-
-
-@app.route("/game/get")
-async def get_game(request: Request):
-    game_id = request.headers.get("id")
-
+    print(game_id)
     db = Prisma()
     await db.connect()
     

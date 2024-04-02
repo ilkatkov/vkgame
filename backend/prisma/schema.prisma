@@ -23,14 +23,16 @@ enum GameType {
 model Game {
   id Int @id @default(autoincrement())
 
-  gameType   GameType
-  cards      Card[]
-  matchCards MatchCard[]
+  gameType    GameType
+  cards       Card[]
 
-  theme   Theme? @relation(fields: [themeId], references: [id])
-  themeId Int?
+  theme       Theme? @relation(fields: [themeId], references: [id])
+  themeId     Int?
 
-  subject String // тематика
+  title       String
+  description String
+
+  icon        String
 
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
@@ -41,15 +43,7 @@ model Card {
 
   name        String
   description String
-
-  game   Game @relation(fields: [gameId], references: [id])
-  gameId Int
-}
-
-model MatchCard {
-  id Int @id @default(autoincrement())
-
-  imageSrc String
+  imageSrc    String
 
   game   Game @relation(fields: [gameId], references: [id])
   gameId Int
@@ -58,10 +52,10 @@ model MatchCard {
 model Theme {
   id Int @id @default(autoincrement())
 
-  fillType      FillType
-  color         String
-  gradientColor String?
-  accentColor   String
+  fill_type         FillType
+  bg_color          String
+  bg_color_gradient String?
+  accent_color      String
 
   games Game[]
 }
