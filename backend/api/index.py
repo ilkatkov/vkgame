@@ -1,4 +1,11 @@
-from flask import Flask, request
+import asyncio
+from flask import Flask, abort
+from prisma import Prisma
+from prisma.errors import RecordNotFoundError
+
+
+db = Prisma()
+asyncio.run(db.connect())
 
 app = Flask(__name__)
 
@@ -51,34 +58,51 @@ def about():
 #         return result
 
 
-@app.route("/game/get", methods=["GET"])
-async def get_game():
-    game_id = request.headers.get("id")
-    print(game_id)
-    db = Prisma()
-    await db.connect()
-    
+@app.route("/game/<int:game_id>", methods=["GET"])
+async def get_game(game_id: int):
+
+    # Подключаться к Призме лучше единожды в момент запуска Фласка
+    # db = Prisma()
+    # await db.connect()
+
     try:
-        game = await db.game.findUnique({
-        where: {
-            id: game_id,
-        },
-        select: {
-            gameType: true,
-            cards: true,
-            matchCards : true,
-            theme : true,
-            subject : true,
-            ownerId : true
-        },
-        })
+        game = await db.game.find_unique(
+            where={
+                "id": game_id,
+            }
+        )
 
-        result = {"status": "ok", "gameType": game.gameType, "cards" : game.cards, "matchCards" : game.matchCards, "theme" : game.theme, "subject" : game.subject, "ownerId" : game.ownerId}
+        return {
+            "response": {
+                "id": game_id,
+                "title": game.title,
+                "theme": {
+                    "fill_type": game.theme.fill_type,
+                    "bg_color": game.theme.bg_color,
+                    "bg_color_gradient": game.theme.bg_color_gradient,
+                    "accent_color": game.theme.accent_color,
+                },
+                "icon": game.icon,
+                "mode": game.gameType,
+                "welcome": {
+                    "title": game.welcomeTitle,
+                    "description": game.welcomeDescription,
+                },
+                "match_cards": list(
+                    map(
+                        lambda card: {
+                            "title": card.name,
+                            "description": card.description,
+                            "url": card.imageSrc,
+                        },
+                        game.cards,
+                    )
+                ),
+            }
+        }, 200
 
+    except RecordNotFoundError as e:
+        abort(404)
 
-    except:
-        result = {"status": "error"}
-
-    finally:
-        await db.disconnect()
-        return result
+    except Exception as e:
+        return {"error": str(e)}, 500
