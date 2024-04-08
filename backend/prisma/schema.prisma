@@ -32,8 +32,7 @@ model Game {
   theme   Theme? @relation(fields: [themeId], references: [id])
   themeId Int?
 
-  title       String
-  description String
+  title String
 
   icon String
 

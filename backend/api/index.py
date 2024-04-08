@@ -1,7 +1,9 @@
 import asyncio
-from flask import Flask, abort
+from flask import Flask, abort, request
 from prisma import Prisma
-from prisma.errors import RecordNotFoundError
+import prisma.errors
+import prisma.enums
+import prisma.models
 
 
 db = Prisma()
@@ -88,7 +90,7 @@ async def get_game(game_id: int):
                     "title": game.welcomeTitle,
                     "description": game.welcomeDescription,
                 },
-                "match_cards": list(
+                "cards": list(
                     map(
                         lambda card: {
                             "title": card.name,
@@ -101,8 +103,59 @@ async def get_game(game_id: int):
             }
         }, 200
 
-    except RecordNotFoundError as e:
-        abort(404)
+    except prisma.errors.RecordNotFoundError as e:
+        return {
+            "error": str(e),
+        }, 404
 
     except Exception as e:
         return {"error": str(e)}, 500
+
+
+@app.route("/game/", methods=["POST"])
+async def post_game():
+    data = request.json()["request"]
+
+    try:
+        game = await db.game.create(
+            {
+                "ownerId": data["user_id"],
+                "title": data["title"],
+                "theme": {
+                    "create": {
+                        "fill_type": data["fill_type"],
+                        "bg_color": data["bg_color"],
+                        "bg_color_gradient": data["bg_color_gradient"],
+                        "accent_color": data["accent_color"],
+                    },
+                },
+                "icon": data["icon"],
+                "gameType": data["mode"],
+                "welcomeTitle": data["welcome"]["title"],
+                "welcomeDescription": data["welcome"]["description"],
+                "cards": {
+                    "create": [
+                        {
+                            "name": card["title"],
+                            "description": card["description"],
+                            "imageSrc": card["url"],
+                        }
+                        for card in data["cards"]
+                    ],
+                },
+            }
+        )
+
+        return {
+            "game_id": game.id,
+        }, 201
+
+    except prisma.errors.MissingRequiredValueError as e:
+        return {
+            "error": str(e),
+        }, 417
+
+    except Exception as e:
+        return {
+            "error": str(e),
+        }, 500
