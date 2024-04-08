@@ -23,16 +23,19 @@ enum GameType {
 model Game {
   id Int @id @default(autoincrement())
 
-  gameType    GameType
-  cards       Card[]
+  gameType GameType
+  cards    Card[]
 
-  theme       Theme? @relation(fields: [themeId], references: [id])
-  themeId     Int?
+  welcomeTitle       String
+  welcomeDescription String
+
+  theme   Theme? @relation(fields: [themeId], references: [id])
+  themeId Int?
 
   title       String
   description String
 
-  icon        String
+  icon String
 
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
