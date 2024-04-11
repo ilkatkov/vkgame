@@ -77,6 +77,15 @@ async def post_game(request: PostGameRequestModel):
         raise HTTPException(status_code=417, detail=str(e))
 
 
+@app.delete("/game/{game_id}")
+async def delete_game(game_id: int):
+    n_del_cards = await db.card.delete_many(where={"gameId": game_id})
+    del_game = await db.game.delete(where={"id": game_id})
+    if del_game is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return {"cards_deleted": n_del_cards, "deleted_game": del_game}
+
+
 @app.get("/user/{user_id}/games")
 async def get_owned_games(user_id: int):
     games = await db.game.find_many(where={"ownerId": user_id})
