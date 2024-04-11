@@ -18,6 +18,26 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
+@app.post("/user/{user_id}")
+async def create_user(user_id: int) -> prisma.models.User:
+    user = await db.user.upsert(
+        where={"id": user_id},
+        data={
+            "create": {
+                "id": user_id,
+            },
+            "update": {},
+        },
+    )
+    return user
+
+
+@app.get("/user/{user_id}/games")
+async def get_owned_games(user_id: int) -> list[prisma.models.Game]:
+    games = await db.game.find_many(where={"ownerId": user_id})
+    return games
+
+
 @app.get("/game/{game_id}")
 async def get_game(game_id: int) -> prisma.models.Game:
     game = await db.game.find_unique(
@@ -108,9 +128,3 @@ async def modify_game(
     if game is None:
         raise HTTPException(status_code=404, detail="No record could be found")
     return game
-
-
-@app.get("/user/{user_id}/games")
-async def get_owned_games(user_id: int) -> list[prisma.models.Game]:
-    games = await db.game.find_many(where={"ownerId": user_id})
-    return games
