@@ -18,6 +18,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
+# User-realted methods
+
+
 @app.post("/user/{user_id}")
 async def create_user(user_id: int) -> prisma.models.User:
     user = await db.user.upsert(
@@ -36,6 +39,9 @@ async def create_user(user_id: int) -> prisma.models.User:
 async def get_owned_games(user_id: int) -> list[prisma.models.Game]:
     games = await db.game.find_many(where={"ownerId": user_id})
     return games
+
+
+# Game-related methods
 
 
 @app.get("/game/{game_id}")
@@ -130,6 +136,9 @@ async def modify_game(
     return game
 
 
+# Card-related methods
+
+
 @app.post("/card")
 async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
     card = await db.card.create(
@@ -164,3 +173,40 @@ async def modify_card(
         query["imageSrc"] = request.image_src
     card = await db.card.update(where={"id": card_id}, data=query)
     return card
+
+
+# Theme-related methods
+
+
+@app.post("/theme")
+async def create_theme(request: CreateThemeRequestModel) -> prisma.models.Theme:
+    theme = await db.theme.create(
+        {
+            **request.model_dump(exclude=["game_id"]),
+            "games": {"connect": {"id": request.game_id}},
+        }
+    )
+    return theme
+
+
+@app.put("/theme/{theme_id}")
+async def modify_theme(
+    theme_id: int, request: ModifyThemeRequestModel
+) -> prisma.models.Theme:
+    theme = await db.theme.update(
+        where={
+            "id": theme_id,
+        },
+        data=request.model_dump(exclude_defaults=True, exclude_unset=True),
+    )
+    if theme is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return theme
+
+
+@app.delete("/theme/{theme_id}")
+async def delete_theme(theme_id: int) -> prisma.models.Theme:
+    theme = await db.theme.delete({"id": theme_id})
+    if theme is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return theme

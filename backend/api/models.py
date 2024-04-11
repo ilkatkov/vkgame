@@ -51,3 +51,18 @@ class ModifyCardRequestModel(BaseModel):
     name: str | None = None
     description: str | None = None
     image_src: str | None = None
+
+
+class CreateThemeRequestModel(BaseModel):
+    game_id: int
+    fill_type: prisma.enums.FillType
+    bg_color: str
+    bg_color_gradient: str | None = None
+    accent_color: str
+
+
+class ModifyThemeRequestModel(BaseModel):
+    fill_type: prisma.enums.FillType
+    bg_color: str
+    bg_color_gradient: str | None = None
+    accent_color: str
