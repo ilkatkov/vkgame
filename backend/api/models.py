@@ -38,3 +38,10 @@ class ModifyGameRequestModel(BaseModel):
 class DeleteGameResponseModel(BaseModel):
     cards_deleted: int
     deleted_game: prisma.models.Game
+
+
+class CreateCardRequestModel(BaseModel):
+    game_id: int
+    name: str
+    description: str
+    image_src: str

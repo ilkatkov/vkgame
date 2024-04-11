@@ -128,3 +128,16 @@ async def modify_game(
     if game is None:
         raise HTTPException(status_code=404, detail="No record could be found")
     return game
+
+
+@app.post("/card")
+async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
+    card = await db.card.create(
+        {
+            "game": {"connect": {"id": request.game_id}},
+            "name": request.name,
+            "description": request.description,
+            "imageSrc": request.image_src,
+        }
+    )
+    return card
