@@ -143,6 +143,14 @@ async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
     return card
 
 
+@app.delete("/card/{card_id}")
+async def delete_card(card_id: int) -> prisma.models.Card:
+    card = await db.card.delete({"id": card_id})
+    if card is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return card
+
+
 @app.put("/card/{card_id}")
 async def modify_card(
     card_id: int, request: ModifyCardRequestModel
