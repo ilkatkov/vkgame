@@ -20,24 +20,20 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/game/{game_id}")
 async def get_game(game_id: int):
-    try:
-        game = await db.game.find_unique(
-            where={
-                "id": game_id,
-            },
-            include={
-                "cards": True,
-                "theme": True,
-            },
-        )
+    game = await db.game.find_unique(
+        where={
+            "id": game_id,
+        },
+        include={
+            "cards": True,
+            "theme": True,
+        },
+    )
 
-        if game is None:
-            raise HTTPException(status_code=404, detail=str(e))
+    if game is None:
+        raise HTTPException(status_code=404, detail=str(e))
 
-        return game
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return game
 
 
 @app.post("/game", status_code=201)
@@ -80,5 +76,8 @@ async def post_game(request: PostGameRequestModel):
     except prisma.errors.MissingRequiredValueError as e:
         raise HTTPException(status_code=417, detail=str(e))
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/user/{user_id}/games")
+async def get_owned_games(user_id: int):
+    games = await db.game.find_many(where={"ownerId": user_id})
+    return games
