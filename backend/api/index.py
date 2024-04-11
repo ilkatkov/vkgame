@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException
 from .models import *
 from prisma import Prisma
 import prisma.errors
-from typing import Any
 
 
 db = Prisma()
@@ -20,7 +19,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/game/{game_id}")
-async def get_game(game_id: int) -> prisma.models.Game:
+async def get_game(game_id: int):
     try:
         game = await db.game.find_unique(
             where={
@@ -78,9 +77,8 @@ async def post_game(request: PostGameRequestModel):
         )
         return {"game_id": game.id}
 
-    # except prisma.errors.MissingRequiredValueError as e:
-    #     raise HTTPException(status_code=417, detail=str(e))
+    except prisma.errors.MissingRequiredValueError as e:
+        raise HTTPException(status_code=417, detail=str(e))
 
     except Exception as e:
-        raise e
         raise HTTPException(status_code=500, detail=str(e))
