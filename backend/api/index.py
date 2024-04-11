@@ -1,32 +1,26 @@
-import asyncio
-from flask import Flask, request
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from .models import *
 from prisma import Prisma
 import prisma.errors
-import prisma.enums
-import prisma.models
+from typing import Any
 
 
-async def prepare_prisma():
-    global db
-    db = Prisma()
+db = Prisma()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await db.connect()
+    yield
+    await db.disconnect()
 
 
-app = Flask(__name__)
+app = FastAPI(lifespan=lifespan)
 
 
-@app.route("/")
-def home():
-    return "Hello, World!"
-
-
-@app.route("/about")
-def about():
-    return "About"
-
-
-@app.route("/game/<int:game_id>", methods=["GET"])
-async def get_game(game_id: int):
+@app.get("/game/{game_id}")
+async def get_game(game_id: int) -> prisma.models.Game:
     try:
         game = await db.game.find_unique(
             where={
@@ -38,107 +32,55 @@ async def get_game(game_id: int):
             },
         )
 
-        return {
-            "response": {
-                "id": game_id,
-                "title": game.title,
-                "theme": (
-                    {
-                        "fill_type": game.theme.fill_type,
-                        "bg_color": game.theme.bg_color,
-                        "bg_color_gradient": game.theme.bg_color_gradient,
-                        "accent_color": game.theme.accent_color,
-                    }
-                    if game.theme is not None
-                    else None
-                ),
-                "icon": game.icon,
-                "mode": game.gameType,
-                "welcome": {
-                    "title": game.welcomeTitle,
-                    "description": game.welcomeDescription,
-                },
-                "cards": list(
-                    map(
-                        lambda card: {
-                            "title": card.name,
-                            "description": card.description,
-                            "url": card.imageSrc,
-                        },
-                        game.cards,
-                    )
-                ),
-            }
-        }, 200
+        if game is None:
+            raise HTTPException(status_code=404, detail=str(e))
 
-    except prisma.errors.RecordNotFoundError as e:
-        return {
-            "error": str(e),
-        }, 404
+        return game
 
     except Exception as e:
-        raise e
-        return {"error": str(e)}, 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.route("/game/", methods=["POST"])
-async def post_game():
+@app.post("/game", status_code=201)
+async def post_game(request: PostGameRequestModel):
     try:
-        data = request.json["request"]
         game = await db.game.create(
             {
-                "owner": {
-                    "connect": {
-                        "id": data["user_id"],
-                    }
-                },
-                "title": data["title"],
-                "theme": (
-                    {
-                        "create": {
-                            "fill_type": data["theme"]["fill_type"],
-                            "bg_color": data["theme"]["bg_color"],
-                            "bg_color_gradient": data["theme"].get(
-                                "bg_color_gradient", None
-                            ),
-                            "accent_color": data["theme"]["accent_color"],
-                        },
-                    }
-                    if data.get("theme", None)
-                    else None
-                ),
-                "icon": data["icon"],
-                "gameType": data["mode"],
-                "welcomeTitle": data["welcome"]["title"],
-                "welcomeDescription": data["welcome"]["description"],
+                "gameType": request.game_type,
                 "cards": {
                     "create": [
                         {
-                            "name": card["title"],
-                            "description": card["description"],
-                            "imageSrc": card["url"],
+                            "name": card.name,
+                            "description": card.description,
+                            "imageSrc": card.image_src,
                         }
-                        for card in data["cards"]
-                    ],
+                        for card in request.cards
+                    ]
                 },
+                "welcomeTitle": request.welcome_title,
+                "welcomeDescription": request.welcome_description,
+                "theme": (
+                    {
+                        "create": {
+                            "fill_type": request.theme.fill_type,
+                            "bg_color": request.theme.bg_color,
+                            "bg_color_gradient": request.theme.bg_color_gradient,
+                            "accent_color": request.theme.accent_color,
+                        }
+                    }
+                    if request.theme is not None
+                    else None
+                ),
+                "title": request.title,
+                "icon": request.icon,
+                "owner": {"connect": {"id": request.user_id}},
             }
         )
+        return {"game_id": game.id}
 
-        return {
-            "game_id": game.id,
-        }, 201
-
-    except prisma.errors.MissingRequiredValueError as e:
-        return {
-            "error": str(e),
-        }, 417
+    # except prisma.errors.MissingRequiredValueError as e:
+    #     raise HTTPException(status_code=417, detail=str(e))
 
     except Exception as e:
-        return {
-            "error": str(e),
-        }, 500
-
-
-if __name__ == "__main__":
-    asyncio.run(prepare_prisma())
-    app.run(debug=True)
+        raise e
+        raise HTTPException(status_code=500, detail=str(e))
