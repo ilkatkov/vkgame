@@ -19,7 +19,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/game/{game_id}")
-async def get_game(game_id: int):
+async def get_game(game_id: int) -> prisma.models.Game:
     game = await db.game.find_unique(
         where={
             "id": game_id,
@@ -31,13 +31,15 @@ async def get_game(game_id: int):
     )
 
     if game is None:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(
+            status_code=404, detail="No record matching the given input could be found"
+        )
 
     return game
 
 
 @app.post("/game", status_code=201)
-async def post_game(request: PostGameRequestModel):
+async def create_game(request: PostGameRequestModel) -> prisma.models.Game:
     try:
         game = await db.game.create(
             {
@@ -71,14 +73,14 @@ async def post_game(request: PostGameRequestModel):
                 "owner": {"connect": {"id": request.user_id}},
             }
         )
-        return {"game_id": game.id}
+        return game
 
     except prisma.errors.MissingRequiredValueError as e:
         raise HTTPException(status_code=417, detail=str(e))
 
 
 @app.delete("/game/{game_id}")
-async def delete_game(game_id: int):
+async def delete_game(game_id: int) -> DeleteGameResponseModel:
     n_del_cards = await db.card.delete_many(where={"gameId": game_id})
     del_game = await db.game.delete(where={"id": game_id})
     if del_game is None:
@@ -86,7 +88,29 @@ async def delete_game(game_id: int):
     return {"cards_deleted": n_del_cards, "deleted_game": del_game}
 
 
+@app.put("/game/{game_id}")
+async def modify_game(
+    game_id: int, request: ModifyGameRequestModel
+) -> prisma.models.Game:
+    query = {}
+    if request.game_type:
+        query["gameType"] = request.game_type
+    if request.welcome_title:
+        query["welcomeTitle"] = request.welcome_title
+    if request.welcome_description:
+        query["welcomeDescription"] = request.welcome_description
+    if request.title:
+        query["title"] = request.title
+    if request.icon:
+        query["icon"] = request.icon
+
+    game = await db.game.update(where={"id": game_id}, data=query)
+    if game is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return game
+
+
 @app.get("/user/{user_id}/games")
-async def get_owned_games(user_id: int):
+async def get_owned_games(user_id: int) -> list[prisma.models.Game]:
     games = await db.game.find_many(where={"ownerId": user_id})
     return games

@@ -1,4 +1,5 @@
 import prisma.enums
+import prisma.models
 from pydantic import BaseModel
 
 
@@ -24,3 +25,16 @@ class PostGameRequestModel(BaseModel):
     theme: ThemeCreateModel | None = None
     title: str
     icon: str
+
+
+class ModifyGameRequestModel(BaseModel):
+    game_type: prisma.enums.GameType | None = None
+    welcome_title: str | None = None
+    welcome_description: str | None = None
+    title: str | None = None
+    icon: str | None = None
+
+
+class DeleteGameResponseModel(BaseModel):
+    cards_deleted: int
+    deleted_game: prisma.models.Game
