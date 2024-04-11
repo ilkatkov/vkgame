@@ -45,3 +45,9 @@ class CreateCardRequestModel(BaseModel):
     name: str
     description: str
     image_src: str
+
+
+class ModifyCardRequestModel(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    image_src: str | None = None

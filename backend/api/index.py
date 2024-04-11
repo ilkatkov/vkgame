@@ -141,3 +141,18 @@ async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
         }
     )
     return card
+
+
+@app.put("/card/{card_id}")
+async def modify_card(
+    card_id: int, request: ModifyCardRequestModel
+) -> prisma.models.Card:
+    query = {}
+    if request.name is not None:
+        query["name"] = request.name
+    if request.description is not None:
+        query["description"] = request.description
+    if request.image_src is not None:
+        query["imageSrc"] = request.image_src
+    card = await db.card.update(where={"id": card_id}, data=query)
+    return card
