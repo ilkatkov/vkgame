@@ -75,7 +75,7 @@ async def create_game(request: PostGameRequestModel) -> prisma.models.Game:
                         {
                             "name": card.name,
                             "description": card.description,
-                            "imageSrc": card.image_src,
+                            "imageSrc": card.image_src, # TODO: сохранять в VK Cloud
                         }
                         for card in request.cards
                     ]
@@ -146,7 +146,7 @@ async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
             "game": {"connect": {"id": request.game_id}},
             "name": request.name,
             "description": request.description,
-            "imageSrc": request.image_src,
+            "imageSrc": request.image_src,  # TODO: сохранять в VK Cloud
         }
     )
     return card
@@ -154,6 +154,7 @@ async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
 
 @app.delete("/card/{card_id}")
 async def delete_card(card_id: int) -> prisma.models.Card:
+    # TODO: удалять из VK Cloud
     card = await db.card.delete({"id": card_id})
     if card is None:
         raise HTTPException(status_code=404, detail="Could not find a record to delete")
@@ -170,7 +171,7 @@ async def modify_card(
     if request.description is not None:
         query["description"] = request.description
     if request.image_src is not None:
-        query["imageSrc"] = request.image_src
+        query["imageSrc"] = request.image_src   # TODO: сначала удалить из, а после сохранить в VK Cloud
     card = await db.card.update(where={"id": card_id}, data=query)
     return card
 
