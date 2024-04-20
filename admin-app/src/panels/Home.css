@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "VK Sans Display Regular";
+  src: url(../../fonts/VKSansDisplay-Regular.ttf);
+}
+
+.cardslogo {
+  margin-left: 55px;
+  margin-top: 53px;
+}
+
+.formwrapper {
+  margin-top: 17px;
+  margin-left: 68px;
+}
+
+.inputlabel {
+  color: black;
+  font-size: 17px;
+  font-family: "VK Sans Display Regular", inherit;
+  margin-bottom: 17px;
+  margin-top: 10px;
+}
+
+.horizontaldiv {
+  display: flex;
+  gap: 16px;
+}
+
+.welcomeinput {
+  display: block;
+  resize: none;
+  background-color: #f5f5f5;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5em;
+  line-height: 1.5em;
+  font-family: "VK Sans Display Regular", Helvetica, sans-serif;
+  /* font-size: 16px; */
+}
+
+.selectchip {
+  padding: 3px 12px;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  gap: 5px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  height: 23px;
+  color: black;
+  font-size: 13px;
+  font-family: "VK Sans Display Regular", Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.selectchip_active {
+  background-color: #eaeaea;
+}
