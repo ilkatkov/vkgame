@@ -1,71 +1,54 @@
-[<img width="134" src="https://vk.com/images/apps/mini_apps/vk_mini_apps_logo.svg">](https://vk.com/services)
+# Basic [VK Bridge](https://github.com/VKCOM/vk-bridge) + [VKUI](https://github.com/VKCOM/VKUI) app
 
-# Create VK Mini App [![npm][npm]][npm-url] [![deps][deps]][deps-url]
+Этот шаблон предоставляет базовый код и настройки для создания мини-приложения внутри ВКонтакте.  
+В качестве сборщика проекта выступает [Vite](https://vite-docs-ru.vercel.app/guide/), подробнее про его конфигурацию и дополнительные плагины можно прочитать [здесь](https://vite-docs-ru.vercel.app/config/) и [здесь]().
 
-## How to use
+## 🚀 Запуск мини приложения
 
-### With NPX
+Запустите ваш мини апп
 
-```bash
-npx @vkontakte/create-vk-mini-app@latest [app-directory-name] [options]
+```sh
+ yarn start
 ```
 
-[NPX](https://github.com/npm/npx) allows you to always use the **latest** version of the package without a global installation.
+Перейдите на [devportal](https://dev.vk.com/ru) или в [управление](https://vk.com/apps?act=manage) и создайте новый мини апп.  
+Вставьте URL на котором работает ваше приложение в настройки, предварительно включив режим разработки.
+Теперь можете открыть мини апп, нажав на его иконку.
+Список всех созданных вами мини приложений вы сможете найти [тут](https://vk.com/apps?act=manage) или [тут](https://dev.vk.com/ru/admin/apps-list).
 
-### With installing the package globally
+## 🌐 Деплой мини приложения
 
-Install the package globally via yarn
+Для того чтобы поделиться приложением запущенным на localhost со своими друзьями, вы можете скачать утилиту vk-tunnel и запустить уже подготовленный скрипт из package.json
 
-```bash
-yarn global add @vkontakte/create-vk-mini-app
+```sh
+yarn global add @vkontakte/vk-tunnel
+yarn run tunnel
 ```
 
-...or npm
+После чего вы получите ссылку, по которой ваше приложение будет доступно с любого устройства, подробнее про vk-tunnel можно прочитать [тут](https://dev.vk.com/ru/libraries/tunnel).
 
-```bash
-npm install --global @vkontakte/create-vk-mini-app
+Для того чтобы захостить ваше приложение на сервера ВКонтакте нужно зайти в vk-hosting-config.json и указать id вашего приложения. Далее можно запустить уже подготовленный скрипт:
+
+```sh
+yarn run deploy
 ```
 
-and use as follows
+После чего, вы получите бессрочную ссылку на ваш мини апп.
 
-```bash
-create-vk-mini-app [app-directory-name] [options]
-```
+## 🗂️ Предустановленные библиотеки
 
-This way is less recommended because you will have to update the package yourself.
+Мы подготовили для вас набор пакетов, с которыми вам будет легко начать разрабатывать мини аппы
+| Пакет | Назначение |
+| ------ | ------ |
+| [vk-bridge](https://dev.vk.com/ru/mini-apps/bridge) | Библиотека для отправки команд и обмена данными с платформой ВКонтакте. |
+| [VKUI](https://vkcom.github.io/VKUI/) | Библиотека React-компонентов для создания мини-приложений в стиле ВКонтакте. |
+| [vk-bridge-react](https://www.npmjs.com/package/@vkontakte/vk-bridge-react) | Пакет, который даёт возможность использовать события библиотеки VK Bridge в React-приложениях. |
+| [icons](https://vkcom.github.io/icons/) | Набор иконок для использования в компонентах VKUI. |
+| [vk-miniapps-deploy](https://dev.vk.com/ru/mini-apps/development/hosting) | Пакет для размещения файлов мини-приложения на хостинге ВКонтакте. |
+| [eruda](https://www.npmjs.com/package/eruda) | Консоль для мобильного браузера|
 
-### Options
+## 📎 Полезные ссылки
 
-Without `--zeit` and `--surge` options
-
-#### `--zeit`
-
-Vercel (Zeit) deploy
-
-Firstly, you have to create Vercel account and connect it with your GitHub profile on [vercel.com](https://vercel.com)
-
-#### `--surge <surge-domain>`
-
-Surge deploy
-
-Firstly, you have to create Surge account and Surge-domain on [surge.sh](https://surge.sh)
-
-#### `--template <templat-type>`
-
-Build with specific template (`typescript` or `javascript`)
-
-#### `--help`
-
-Prints the synopsis and a list of options
-
-## How to start work with app
-
-Go to created folder and run:
-`yarn start` or `npm start` to start dev server with hot reload on `localhost:10888`.
-
-`yarn run build` or `npm run build` to build production bundle, with tree-shaking, uglify and all this modern fancy stuff.
-
-[npm]: https://img.shields.io/npm/v/@vkontakte/create-vk-mini-app.svg
-[npm-url]: https://npmjs.com/package/@vkontakte/create-vk-mini-app
-[deps]: https://img.shields.io/david/vkcom/create-vk-mini-app.svg
-[deps-url]: https://david-dm.org/vkcom/create-vk-mini-app
+[Dev портал разработчиков](https://dev.vk.com/ru)  
+[Пример мини приложения](https://dev.vk.com/ru/mini-apps/examples/shop)  
+[Если столкнулись с проблемами](https://github.com/VKCOM/create-vk-mini-app/issues)
