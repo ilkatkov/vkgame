@@ -50,10 +50,7 @@ async def get_game(game_id: int) -> prisma.models.Game:
         where={
             "id": game_id,
         },
-        include={
-            "cards": True,
-            "theme": True,
-        },
+        include={"classicCards": True, "matchCards": True},
     )
 
     if game is None:
@@ -65,71 +62,65 @@ async def get_game(game_id: int) -> prisma.models.Game:
 
 
 @app.post("/game", status_code=201)
-async def create_game(request: PostGameRequestModel) -> prisma.models.Game:
-    try:
-        game = await db.game.create(
-            {
-                "gameType": request.game_type,
-                "cards": {
-                    "create": [
-                        {
-                            "name": card.name,
-                            "description": card.description,
-                            "imageSrc": card.image_src, # TODO: сохранять в VK Cloud
-                        }
-                        for card in request.cards
-                    ]
-                },
-                "welcomeTitle": request.welcome_title,
-                "welcomeDescription": request.welcome_description,
-                "theme": (
+async def create_game(request: CreateGameRequestModel) -> prisma.models.Game:
+    game = await db.game.create(
+        {
+            "owner": {"connect": {"id": request.ownerId}},
+            "logoURL": request.logoURL,
+            "background": request.background,
+            "welcomeTitle": request.welcomeTitle,
+            "welcomeBody": request.welcomeBody,
+            "subject": request.subject,
+            "leaveTitle": request.leaveTitle,
+            "leaveBody": request.leaveBody,
+            "leaveURL": request.leaveURL,
+            "gameType": request.gameType,
+            "classicCards": {
+                "create": [
                     {
-                        "create": {
-                            "fill_type": request.theme.fill_type,
-                            "bg_color": request.theme.bg_color,
-                            "bg_color_gradient": request.theme.bg_color_gradient,
-                            "accent_color": request.theme.accent_color,
-                        }
+                        "term": card.term,
+                        "description": card.description,
                     }
-                    if request.theme is not None
-                    else None
-                ),
-                "title": request.title,
-                "icon": request.icon,
-                "owner": {"connect": {"id": request.user_id}},
-            }
-        )
-        return game
-
-    except prisma.errors.MissingRequiredValueError as e:
-        raise HTTPException(status_code=417, detail=str(e))
+                    for card in request.classicCards
+                ]
+            },
+            "rounds": request.rounds,
+            "matchCards": {
+                "create": [
+                    {
+                        "imageURL": card.imageURL,
+                        "name": card.name,
+                        "description": card.description,
+                    }
+                    for card in request.matchCards
+                ]
+            },
+        }
+    )
+    return game
 
 
 @app.delete("/game/{game_id}")
 async def delete_game(game_id: int) -> DeleteGameResponseModel:
-    n_del_cards = await db.card.delete_many(where={"gameId": game_id})
-    del_game = await db.game.delete(where={"id": game_id})
-    if del_game is None:
+    cardsDeleted = await db.classiccard.delete_many({"gameId": game_id})
+    cardsDeleted += await db.matchcard.delete_many({"gameId": game_id})
+    deletedGame = await db.game.delete({"id": game_id})
+    if deletedGame is None:
         raise HTTPException(status_code=404, detail="Could not find a record to delete")
-    return {"cards_deleted": n_del_cards, "deleted_game": del_game}
+    return {"cardsDeleted": cardsDeleted, "deletedGame": deletedGame}
 
 
 @app.put("/game/{game_id}")
 async def modify_game(
     game_id: int, request: ModifyGameRequestModel
 ) -> prisma.models.Game:
-    query = {}
-    if request.game_type:
-        query["gameType"] = request.game_type
-    if request.welcome_title:
-        query["welcomeTitle"] = request.welcome_title
-    if request.welcome_description:
-        query["welcomeDescription"] = request.welcome_description
-    if request.title:
-        query["title"] = request.title
-    if request.icon:
-        query["icon"] = request.icon
-
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
     game = await db.game.update(where={"id": game_id}, data=query)
     if game is None:
         raise HTTPException(status_code=404, detail="No record could be found")
@@ -139,75 +130,84 @@ async def modify_game(
 # Card-related methods
 
 
-@app.post("/card")
-async def create_card(request: CreateCardRequestModel) -> prisma.models.Card:
-    card = await db.card.create(
+@app.post("/classiccard")
+async def create_classic_card(
+    request: CreateClassicCardRequestModel,
+) -> prisma.models.ClassicCard:
+    card = await db.classiccard.create(
         {
-            "game": {"connect": {"id": request.game_id}},
-            "name": request.name,
+            "game": {"connect": {"id": request.gameId}},
+            "term": request.term,
             "description": request.description,
-            "imageSrc": request.image_src,  # TODO: сохранять в VK Cloud
         }
     )
     return card
 
 
-@app.delete("/card/{card_id}")
-async def delete_card(card_id: int) -> prisma.models.Card:
-    # TODO: удалять из VK Cloud
-    card = await db.card.delete({"id": card_id})
+@app.delete("/classiccard/{card_id}")
+async def delete_classic_card(card_id: int) -> prisma.models.ClassicCard:
+    card = await db.classiccard.delete({"id": card_id})
     if card is None:
         raise HTTPException(status_code=404, detail="Could not find a record to delete")
     return card
 
 
-@app.put("/card/{card_id}")
-async def modify_card(
-    card_id: int, request: ModifyCardRequestModel
-) -> prisma.models.Card:
-    query = {}
-    if request.name is not None:
-        query["name"] = request.name
-    if request.description is not None:
-        query["description"] = request.description
-    if request.image_src is not None:
-        query["imageSrc"] = request.image_src   # TODO: сначала удалить из, а после сохранить в VK Cloud
-    card = await db.card.update(where={"id": card_id}, data=query)
+@app.put("/classiccard/{card_id}")
+async def modify_classic_card(
+    card_id: int, request: ModifyClassicCardRequestModel
+) -> prisma.models.ClassicCard:
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
+    card = await db.classiccard.update(where={"id": card_id}, data=query)
+    if card is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
     return card
 
 
-# Theme-related methods
-
-
-@app.post("/theme")
-async def create_theme(request: CreateThemeRequestModel) -> prisma.models.Theme:
-    theme = await db.theme.create(
+@app.post("/matchcard")
+async def create_match_card(
+    request: CreateMatchCardRequestModel,
+) -> prisma.models.MatchCard:
+    card = await db.matchcard.create(
         {
-            **request.model_dump(exclude=["game_id"]),
-            "games": {"connect": {"id": request.game_id}},
+            "game": {
+                "connect": {
+                    "id": request.gameId,
+                }
+            },
+            "imageURL": request.imageURL,
+            "name": request.name,
+            "description": request.description,
         }
     )
-    return theme
+    return card
 
 
-@app.put("/theme/{theme_id}")
-async def modify_theme(
-    theme_id: int, request: ModifyThemeRequestModel
-) -> prisma.models.Theme:
-    theme = await db.theme.update(
-        where={
-            "id": theme_id,
-        },
-        data=request.model_dump(exclude_defaults=True, exclude_unset=True),
-    )
-    if theme is None:
-        raise HTTPException(status_code=404, detail="No record could be found")
-    return theme
-
-
-@app.delete("/theme/{theme_id}")
-async def delete_theme(theme_id: int) -> prisma.models.Theme:
-    theme = await db.theme.delete({"id": theme_id})
-    if theme is None:
+@app.delete("/matchcard/{card_id}")
+async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
+    card = await db.matchcard.delete({"id": card_id})
+    if card is None:
         raise HTTPException(status_code=404, detail="Could not find a record to delete")
-    return theme
+    return card
+
+
+@app.put("/matchcard/{card_id}")
+async def modify_classic_card(
+    card_id: int, request: ModifyMatchCardRequestModel
+) -> prisma.models.MatchCard:
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
+    card = await db.matchcard.update(where={"id": card_id}, data=query)
+    if card is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return card

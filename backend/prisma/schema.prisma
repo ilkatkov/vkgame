@@ -16,53 +16,52 @@ model User {
 }
 
 enum GameType {
-  CARDS
+  CLASSIC
   MATCHCARDS
 }
 
 model Game {
-  id Int @id @default(autoincrement())
-
-  gameType GameType
-  cards    Card[]
-
-  welcomeTitle       String
-  welcomeDescription String
-
-  theme   Theme? @relation(fields: [themeId], references: [id])
-  themeId Int?
-
-  title String
-
-  icon String
-
+  id      Int  @id @default(autoincrement())
   owner   User @relation(fields: [ownerId], references: [id])
   ownerId Int
+
+  logoURL    String
+  background Int // range [0; 9]
+
+  welcomeTitle String
+  welcomeBody  String
+
+  subject String
+
+  leaveTitle String?
+  leaveBody  String?
+  leaveURL   String?
+
+  gameType GameType
+
+  // for classic
+  classicCards ClassicCard[]
+
+  // for matchcards
+  rounds     Int? // range [1; 3]
+  matchCards MatchCard[]
 }
 
-model Card {
-  id Int @id @default(autoincrement())
-
-  name        String
-  description String
-  imageSrc    String
-
+model ClassicCard {
+  id     Int  @id @default(autoincrement())
   game   Game @relation(fields: [gameId], references: [id])
   gameId Int
+
+  term        String
+  description String
 }
 
-model Theme {
-  id Int @id @default(autoincrement())
+model MatchCard {
+  id     Int  @id @default(autoincrement())
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
 
-  fill_type         FillType
-  bg_color          String
-  bg_color_gradient String?
-  accent_color      String
-
-  games Game[]
-}
-
-enum FillType {
-  SOLID
-  GRADIENT
+  imageURL    String
+  name        String?
+  description String?
 }
