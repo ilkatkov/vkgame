@@ -1,144 +1,213 @@
-import asyncio
-from flask import Flask, request
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from .models import *
 from prisma import Prisma
 import prisma.errors
-import prisma.enums
-import prisma.models
 
 
-async def prepare_prisma():
-    global db
-    db = Prisma()
+db = Prisma()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await db.connect()
+    yield
+    await db.disconnect()
 
 
-app = Flask(__name__)
+app = FastAPI(lifespan=lifespan)
 
 
-@app.route("/")
-def home():
-    return "Hello, World!"
+# User-realted methods
 
 
-@app.route("/about")
-def about():
-    return "About"
-
-
-@app.route("/game/<int:game_id>", methods=["GET"])
-async def get_game(game_id: int):
-    try:
-        game = await db.game.find_unique(
-            where={
-                "id": game_id,
+@app.post("/user/{user_id}")
+async def create_user(user_id: int) -> prisma.models.User:
+    user = await db.user.upsert(
+        where={"id": user_id},
+        data={
+            "create": {
+                "id": user_id,
             },
-            include={
-                "cards": True,
-                "theme": True,
-            },
+            "update": {},
+        },
+    )
+    return user
+
+
+@app.get("/user/{user_id}/games")
+async def get_owned_games(user_id: int) -> list[prisma.models.Game]:
+    games = await db.game.find_many(where={"ownerId": user_id})
+    return games
+
+
+# Game-related methods
+
+
+@app.get("/game/{game_id}")
+async def get_game(game_id: int) -> prisma.models.Game:
+    game = await db.game.find_unique(
+        where={
+            "id": game_id,
+        },
+        include={"classicCards": True, "matchCards": True},
+    )
+
+    if game is None:
+        raise HTTPException(
+            status_code=404, detail="No record matching the given input could be found"
         )
 
-        return {
-            "response": {
-                "id": game_id,
-                "title": game.title,
-                "theme": (
+    return game
+
+
+@app.post("/game", status_code=201)
+async def create_game(request: CreateGameRequestModel) -> prisma.models.Game:
+    game = await db.game.create(
+        {
+            "owner": {"connect": {"id": request.ownerId}},
+            "logoURL": request.logoURL,
+            "background": request.background,
+            "welcomeTitle": request.welcomeTitle,
+            "welcomeBody": request.welcomeBody,
+            "subject": request.subject,
+            "leaveTitle": request.leaveTitle,
+            "leaveBody": request.leaveBody,
+            "leaveURL": request.leaveURL,
+            "gameType": request.gameType,
+            "classicCards": {
+                "create": [
                     {
-                        "fill_type": game.theme.fill_type,
-                        "bg_color": game.theme.bg_color,
-                        "bg_color_gradient": game.theme.bg_color_gradient,
-                        "accent_color": game.theme.accent_color,
+                        "term": card.term,
+                        "description": card.description,
                     }
-                    if game.theme is not None
-                    else None
-                ),
-                "icon": game.icon,
-                "mode": game.gameType,
-                "welcome": {
-                    "title": game.welcomeTitle,
-                    "description": game.welcomeDescription,
-                },
-                "cards": list(
-                    map(
-                        lambda card: {
-                            "title": card.name,
-                            "description": card.description,
-                            "url": card.imageSrc,
-                        },
-                        game.cards,
-                    )
-                ),
-            }
-        }, 200
-
-    except prisma.errors.RecordNotFoundError as e:
-        return {
-            "error": str(e),
-        }, 404
-
-    except Exception as e:
-        raise e
-        return {"error": str(e)}, 500
-
-
-@app.route("/game/", methods=["POST"])
-async def post_game():
-    try:
-        data = request.json["request"]
-        game = await db.game.create(
-            {
-                "owner": {
-                    "connect": {
-                        "id": data["user_id"],
-                    }
-                },
-                "title": data["title"],
-                "theme": (
+                    for card in request.classicCards
+                ]
+            },
+            "rounds": request.rounds,
+            "matchCards": {
+                "create": [
                     {
-                        "create": {
-                            "fill_type": data["theme"]["fill_type"],
-                            "bg_color": data["theme"]["bg_color"],
-                            "bg_color_gradient": data["theme"].get(
-                                "bg_color_gradient", None
-                            ),
-                            "accent_color": data["theme"]["accent_color"],
-                        },
+                        "imageURL": card.imageURL,
+                        "name": card.name,
+                        "description": card.description,
                     }
-                    if data.get("theme", None)
-                    else None
-                ),
-                "icon": data["icon"],
-                "gameType": data["mode"],
-                "welcomeTitle": data["welcome"]["title"],
-                "welcomeDescription": data["welcome"]["description"],
-                "cards": {
-                    "create": [
-                        {
-                            "name": card["title"],
-                            "description": card["description"],
-                            "imageSrc": card["url"],
-                        }
-                        for card in data["cards"]
-                    ],
-                },
-            }
-        )
-
-        return {
-            "game_id": game.id,
-        }, 201
-
-    except prisma.errors.MissingRequiredValueError as e:
-        return {
-            "error": str(e),
-        }, 417
-
-    except Exception as e:
-        return {
-            "error": str(e),
-        }, 500
+                    for card in request.matchCards
+                ]
+            },
+        }
+    )
+    return game
 
 
-if __name__ == "__main__":
-    asyncio.run(prepare_prisma())
-    app.run(debug=True)
+@app.delete("/game/{game_id}")
+async def delete_game(game_id: int) -> DeleteGameResponseModel:
+    cardsDeleted = await db.classiccard.delete_many({"gameId": game_id})
+    cardsDeleted += await db.matchcard.delete_many({"gameId": game_id})
+    deletedGame = await db.game.delete({"id": game_id})
+    if deletedGame is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return {"cardsDeleted": cardsDeleted, "deletedGame": deletedGame}
+
+
+@app.put("/game/{game_id}")
+async def modify_game(
+    game_id: int, request: ModifyGameRequestModel
+) -> prisma.models.Game:
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
+    game = await db.game.update(where={"id": game_id}, data=query)
+    if game is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return game
+
+
+# Card-related methods
+
+
+@app.post("/classiccard")
+async def create_classic_card(
+    request: CreateClassicCardRequestModel,
+) -> prisma.models.ClassicCard:
+    card = await db.classiccard.create(
+        {
+            "game": {"connect": {"id": request.gameId}},
+            "term": request.term,
+            "description": request.description,
+        }
+    )
+    return card
+
+
+@app.delete("/classiccard/{card_id}")
+async def delete_classic_card(card_id: int) -> prisma.models.ClassicCard:
+    card = await db.classiccard.delete({"id": card_id})
+    if card is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return card
+
+
+@app.put("/classiccard/{card_id}")
+async def modify_classic_card(
+    card_id: int, request: ModifyClassicCardRequestModel
+) -> prisma.models.ClassicCard:
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
+    card = await db.classiccard.update(where={"id": card_id}, data=query)
+    if card is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return card
+
+
+@app.post("/matchcard")
+async def create_match_card(
+    request: CreateMatchCardRequestModel,
+) -> prisma.models.MatchCard:
+    card = await db.matchcard.create(
+        {
+            "game": {
+                "connect": {
+                    "id": request.gameId,
+                }
+            },
+            "imageURL": request.imageURL,
+            "name": request.name,
+            "description": request.description,
+        }
+    )
+    return card
+
+
+@app.delete("/matchcard/{card_id}")
+async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
+    card = await db.matchcard.delete({"id": card_id})
+    if card is None:
+        raise HTTPException(status_code=404, detail="Could not find a record to delete")
+    return card
+
+
+@app.put("/matchcard/{card_id}")
+async def modify_classic_card(
+    card_id: int, request: ModifyMatchCardRequestModel
+) -> prisma.models.MatchCard:
+    query = request.model_dump()
+    keysToDelete = []
+    for key in query:
+        if not query[key]:
+            keysToDelete.append(key)
+    for key in keysToDelete:
+        query.pop(key)
+    card = await db.matchcard.update(where={"id": card_id}, data=query)
+    if card is None:
+        raise HTTPException(status_code=404, detail="No record could be found")
+    return card
