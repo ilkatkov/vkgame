@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  games Game[]
+}
+
+enum GameType {
+  CLASSIC
+  MATCHCARDS
+}
+
+model Game {
+  id      Int  @id @default(autoincrement())
+  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+
+  logoURL    String
+  background Int // range [0; 9]
+
+  welcomeTitle String
+  welcomeBody  String
+
+  subject String
+
+  leaveTitle String?
+  leaveBody  String?
+  leaveURL   String?
+
+  gameType GameType
+
+  // for classic
+  classicCards ClassicCard[]
+
+  // for matchcards
+  rounds     Int? // range [1; 3]
+  matchCards MatchCard[]
+}
+
+model ClassicCard {
+  id     Int  @id @default(autoincrement())
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+
+  term        String
+  description String
+}
+
+model MatchCard {
+  id     Int  @id @default(autoincrement())
+  game   Game @relation(fields: [gameId], references: [id])
+  gameId Int
+
+  imageURL    String
+  name        String?
+  description String?
+}
