@@ -3,27 +3,67 @@
   src: url(../../fonts/VKSansDisplay-Regular.ttf);
 }
 
+@font-face {
+  font-family: "VK Sans Display DemiBold";
+  src: url(../../fonts/VKSansDisplay-DemiBold.ttf);
+}
+
 .cardslogo {
   margin-left: 55px;
   margin-top: 53px;
 }
 
 .formwrapper {
-  margin-top: 17px;
-  margin-left: 68px;
+  margin: 17px 68px;
 }
 
 .inputlabel {
   color: black;
   font-size: 17px;
-  font-family: "VK Sans Display Regular", inherit;
+  font-family: "VK Sans Display Regular", Helvetica, sans-serif;
   margin-bottom: 17px;
   margin-top: 10px;
 }
 
 .horizontaldiv {
   display: flex;
+  align-items: center;
   gap: 16px;
+}
+
+.toright {
+  justify-content: end;
+}
+
+.logochip {
+  cursor: pointer;
+  height: 40px;
+  opacity: 0.6;
+}
+
+.logochip_active {
+  opacity: 1 !important;
+}
+
+.logochip img {
+  width: 40px;
+  aspect-ratio: 1 / 1;
+  border-radius: 9px;
+}
+
+.addlogochip {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0px 12px;
+  height: 30px;
+  border-radius: 8px;
+  color: white;
+  background-color: #0077ff;
+  font-size: 14px;
+  font-family: "VK Sans Display DemiBold", Helvetica, sans-serif;
 }
 
 .welcomeinput {
@@ -36,7 +76,21 @@
   padding: 0.5em;
   line-height: 1.5em;
   font-family: "VK Sans Display Regular", Helvetica, sans-serif;
-  /* font-size: 16px; */
+}
+
+.backgroundchip {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.backgroundchip_active {
+  opacity: 1 !important;
+}
+
+.backgroundchip img {
+  width: 42px;
+  aspect-ratio: 1 / 1;
+  border-radius: 9px;
 }
 
 .selectchip {
@@ -56,4 +110,14 @@
 
 .selectchip_active {
   background-color: #eaeaea;
+}
+
+.continue {
+  color: #0077ff;
+  display: flex;
+  gap: 5px;
+  font-family: "VK Sans Display DemiBold", Helvetica, sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  align-items: center;
 }
