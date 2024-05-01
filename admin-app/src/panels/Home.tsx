@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import {
   Panel,
   // Header,
@@ -26,14 +26,16 @@ import Bg7 from "../assets/ (7).png";
 import Bg8 from "../assets/ (8).png";
 import Bg9 from "../assets/ (9).png";
 import Bg10 from "../assets/ (10).png";
-const backgrouds = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9, Bg10];
+import { backendURL } from "../settings";
+const backgrounds = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9, Bg10];
 
 export interface HomeProps extends NavIdProps {
   go: (panelName: string) => void;
   fetchedUser?: UserInfo;
+  setGameId: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-export const Home: FC<HomeProps> = ({ id, go, fetchedUser }) => {
+export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
   // MARK: logos
 
   const [selectedLogo, setSelectedLogo] = useState<string | File>("");
@@ -63,18 +65,19 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser }) => {
   const [welcomeTitle, setWelcomeTitle] = useState<string>("");
   const [welcomeBody, setWelcomeBody] = useState<string>("");
 
-  // MARK: backgroud
+  // MARK: background
 
-  const [backgroud, setBackgroud] = useState<string>("background");
+  const [background, setBackground] = useState<string>("background");
   const BackgroundChip: React.FC<{ bg: string }> = ({ bg }) => {
     return (
       <div
         className={
-          "backgroundchip" + (backgroud == bg ? " backgroundchip_active" : "")
+          "backgroundchip" + (background == bg ? " backgroundchip_active" : "")
         }
         onClick={(e) => {
           e.preventDefault();
-          setBackgroud(bg);
+          setBackground(bg);
+          console.log(bg);
         }}
       >
         <img src={bg} alt="" />
@@ -99,6 +102,8 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser }) => {
       </div>
     );
   };
+
+  // MARK: gametype
 
   const [gameType, setGameType] = useState<string | null>("Мэтч-карточки");
   const GameTypeChip: React.FC<{ chipGameType: string }> = ({
@@ -199,7 +204,7 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser }) => {
           {/* MARK: background */}
           <Text className="inputlabel">Выберите фон:</Text>
           <div className="horizontaldiv">
-            {backgrouds.map((bg, index) => (
+            {backgrounds.map((bg, index) => (
               <BackgroundChip bg={bg} key={index} />
             ))}
           </div>
@@ -214,20 +219,66 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser }) => {
             <SubjectChip chipSubject="Музыка" />
           </div>
           <Spacing size={12} />
+          {/* MARK: gametype */}
           <Text className="inputlabel">Выберите режим игры:</Text>
           <div className="horizontaldiv">
-            <GameTypeChip chipGameType="Мэтч-карточки" />
-            <GameTypeChip chipGameType="Текстовые карточки" />
+            <GameTypeChip chipGameType="CLASSIC" />
+            <GameTypeChip chipGameType="MATCHCARDS" />
           </div>
           <Spacing size={12} />
-          {gameType == "Мэтч-карточки" && <>{/* <MatchForm /> */}</>}
-          {gameType == "Текстовые карточки" && (
+          {gameType == "CLASSIC" && (
+            <>
+              <Text>В разработке</Text>
+            </>
+          )}
+          {gameType == "MATCHCARDS" && (
             <>
               <Text>В разработке</Text>
             </>
           )}
           <div className="horizontaldiv toright">
-            <div className="continue">
+            <div
+              className="continue"
+              onClick={(e) => {
+                e.preventDefault();
+                if (fetchedUser && "id" in fetchedUser) {
+                  fetch(`${backendURL}/game`, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: new Headers({
+                      "Content-Type": "application/json",
+                    }),
+                    body: JSON.stringify({
+                      ownerId: fetchedUser.id,
+                      logoURL: "foo", // TODO
+                      background: Number(
+                        background.slice(
+                          background.indexOf("(") + 1,
+                          background.indexOf(")")
+                        )
+                      ),
+                      welcomeTitle: welcomeTitle,
+                      welcomeBody: welcomeBody,
+                      subject: subject,
+                      leaveTitle: "foo", // TODO
+                      leaveBody: "foo", // TODO
+                      leaveURL: "foo", // TODO
+                      gameType: gameType,
+                      classicCards: [], // TODO
+                      rounds: 0, // TODO
+                      matchCards: [], // TODO
+                    }),
+                  })
+                    .then((res) => {
+                      if (res.ok) return res.json();
+                    })
+                    .then((json) => {
+                      setGameId(json.id);
+                      go("persik");
+                    });
+                }
+              }}
+            >
               Продолжить <Icon12ChevronRight color="#0077ff" />
             </div>
           </div>
