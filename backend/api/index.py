@@ -193,7 +193,7 @@ async def create_match_card(
 
 
 @app.delete("/matchcard/{card_id}")
-async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
+async def delete_match_card(card_id: int) -> prisma.models.MatchCard:
     card = await db.matchcard.delete({"id": card_id})
     if card is None:
         raise HTTPException(status_code=404, detail="Could not find a record to delete")
@@ -201,7 +201,7 @@ async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
 
 
 @app.put("/matchcard/{card_id}")
-async def modify_classic_card(
+async def modify_match_card(
     card_id: int, request: ModifyMatchCardRequestModel
 ) -> prisma.models.MatchCard:
     query = request.model_dump()
