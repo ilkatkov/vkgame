@@ -27,6 +27,8 @@ import Bg8 from "../assets/ (8).png";
 import Bg9 from "../assets/ (9).png";
 import Bg10 from "../assets/ (10).png";
 import { backendURL } from "../settings";
+import ClassicCardForm from "./forms/ClassicCardForm";
+import MatchCardForm from "./forms/MatchCardForm";
 const backgrounds = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9, Bg10];
 
 export interface HomeProps extends NavIdProps {
@@ -124,6 +126,23 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
     );
   };
 
+  // MARK: classic cards
+
+  const classicCardsState = useState<
+    {
+      term: string;
+      description: string;
+    }[]
+  >([]);
+
+  const matchCardsState = useState<
+    {
+      image: File | null;
+      name: string;
+      description: string;
+    }[]
+  >([]);
+
   return (
     <Panel id={id}>
       <Group
@@ -178,7 +197,7 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
           {/* MARK: welcome */}
           <Text className="inputlabel">Приветственное сообщение:</Text>
           <textarea
-            className="welcomeinput"
+            className="textinput"
             cols={50}
             rows={1}
             maxLength={45}
@@ -190,7 +209,7 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
           ></textarea>
           <Spacing size={10} />
           <textarea
-            className="welcomeinput"
+            className="textinput"
             cols={50}
             rows={2}
             maxLength={95}
@@ -228,14 +247,15 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
           <Spacing size={12} />
           {gameType == "CLASSIC" && (
             <>
-              <Text>В разработке</Text>
+              <ClassicCardForm classicCardsState={classicCardsState} />
             </>
           )}
           {gameType == "MATCHCARDS" && (
             <>
-              <Text>В разработке</Text>
+              <MatchCardForm matchCardsState={matchCardsState} />
             </>
           )}
+          <Spacing size={24} />
           <div className="horizontaldiv toright">
             <div
               className="continue"

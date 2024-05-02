@@ -1,0 +1,58 @@
+.classicform,
+.matchform {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.classiccard,
+.matchcard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.smalltext {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: black;
+  font-size: 13px;
+  font-family: "VK Sans Display Regular", Helvetica, sans-serif;
+}
+
+.deletecard {
+  cursor: pointer;
+}
+
+.addclassic,
+.addmatch {
+  color: #0077ff;
+  border: 2px solid #0077ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.addclassic {
+  width: 230px;
+  height: 135px;
+}
+
+.addmatch {
+  min-height: 139px;
+  width: 234px;
+}
+
+.matchimage {
+  cursor: pointer;
+  color: #0077ff;
+  display: flex;
+}
+
+.matchimage img {
+  max-width: 110px;
+  max-height: 100px;
+}
