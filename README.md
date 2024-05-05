@@ -15,18 +15,19 @@ POST
 
 input:
 	user_id (integer)
+
 output:
 	Successful Response(200):
-	{
-  "id": 0,
-  "games": [
-    "string"
-  ]
-}
+	```{
+  	"id": 0,
+  	"games": [
+	    "string"
+	  ]
+	}```
 
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -35,9 +36,9 @@ output:
       ],
       "msg": "string",
       "type": "string"
-    }
-  ]
-}
+    	}
+  	]
+	}```
 
 
 
@@ -49,9 +50,10 @@ GET
 
 input:
 	user_id (integer)
+
 output:
 	Successful Response:
-	[
+	```[
   {
     "id": 0,
     "owner": {
@@ -91,10 +93,10 @@ output:
       }
     ]
   }
-]
+]```
 
 Validation Error(422):
-	{
+	```{
   "detail": [
     {
       "loc": [
@@ -105,7 +107,7 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}
+}```
 
 
 **Get Game
@@ -114,9 +116,10 @@ GET
 
 input:
 	game_id (integer)
+
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "owner": {
     "id": 0,
@@ -154,10 +157,10 @@ output:
       "description": "string"
     }
   ]
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -168,7 +171,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -179,9 +182,10 @@ DELETE
 
 input:
 	game_id (integer)
+
 output:
 	Successful Response(200):
-	{
+	```{
   "cardsDeleted": 0,
   "deletedGame": {
     "id": 0,
@@ -222,10 +226,10 @@ output:
       }
     ]
   }
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -236,7 +240,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -246,8 +250,9 @@ PUT
 
 input:
 	game_id (integer)
-	Request body (application/json)
-	{
+	
+ Request body (application/json)
+	```{
   "logoURL": "string",
   "background": 0,
   "welcomeTitle": "string",
@@ -257,11 +262,11 @@ input:
   "leaveBody": "string",
   "leaveURL": "string",
   "rounds": 0
-}
+}```
 
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "owner": {
     "id": 0,
@@ -299,10 +304,10 @@ output:
       "description": "string"
     }
   ]
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -313,7 +318,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 	
 
 **Create Game
@@ -322,7 +327,7 @@ POST
 
 input:
 	Request body (application/json)
-	{
+	```{
   "ownerId": 0,
   "logoURL": "string",
   "background": 0,
@@ -336,11 +341,11 @@ input:
   "classicCards": [],
   "rounds": 0,
   "matchCards": []
-}
+}```
 
 output:
 	Successful Response(201):
-	{
+	```{
   "id": 0,
   "owner": {
     "id": 0,
@@ -378,11 +383,11 @@ output:
       "description": "string"
     }
   ]
-}
+}```
 
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -393,7 +398,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 **Create Classic Card
@@ -402,24 +407,24 @@ POST
 
 input:
 	Request body (application/json)
-	{
+	```{
   "term": "string",
   "description": "string",
   "gameId": 0
-}
+}```
 
 output:
 	Successful Response(200)	:
-	{
+	```{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -430,7 +435,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -440,19 +445,20 @@ DELETE
 
 input:
 	card_id (integer)
+
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}
+}```
 
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -463,7 +469,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -473,24 +479,25 @@ PUT
 
 input:
 	card_id(int)
+
 request_body (application/json)
-	{
+	```{
   "term": "string",
   "description": "string"
-}
+}```
 
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -501,7 +508,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -511,16 +518,16 @@ POST
 
 input:
 	request_body (application/json):
-	{
+	```{
   "imageURL": "string",
   "name": "string",
   "description": "string",
   "gameId": 0
-}
+}```
 
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "game": {
     "id": 0,
@@ -558,11 +565,11 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}
+}```
 
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -573,7 +580,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -585,7 +592,7 @@ input:
 	card_id(int)
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "game": {
     "id": 0,
@@ -623,10 +630,10 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -637,7 +644,7 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 
 
 
@@ -647,15 +654,15 @@ PUT
 
 input:
 	request_body (application/json)
-	{
+	```{
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}
+}```
 
 output:
 	Successful Response(200):
-	{
+	```{
   "id": 0,
   "game": {
     "id": 0,
@@ -693,10 +700,10 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}
+}```
 
-	Validation Error(422):
-	{
+Validation Error(422):
+	```{
   "detail": [
     {
       "loc": [
@@ -707,5 +714,5 @@ output:
       "type": "string"
     }
   ]
-}
+}```
 	
