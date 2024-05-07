@@ -548,7 +548,7 @@ card_id(int)
 ```
 
 ## Create Match Card
-** /matchcard
+* /matchcard
 * POST
 * input:
 #### Request_body (application/json):
