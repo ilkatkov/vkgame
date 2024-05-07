@@ -1,59 +1,62 @@
-API Запросы:
+# API Запросы
 
-Основная информация
-Запрос/Ответ
-Входные параметры
-   Проверки
-Выходные параметры
-   Положительный ответ
-   Ответ с ошибками
-Описание интеграции
+> ## Основная информация
+> * Запрос/Ответ
+> * Входные параметры
+> * Проверки
+> * Выходные параметры
+> * Положительный ответ
+> * Ответ с ошибками
+> * Описание интеграции
 
-**Create user
-/user/{user_id}**
-POST
+## Create user
+* /user/{user_id}
+* POST
+* input:
+```
+user_id (integer)
+```
 
-input:
-	user_id (integer)
+* output:
 
-output:
-	Successful Response(200):
-	```{
-  	"id": 0,
-  	"games": [
-	    "string"
-	  ]
-	}```
+#### 🟢 Successful Response(200):
+```
+{
+	"id": 0,
+	"games": [
+		"string"
+	]
+}
+```
 
+#### 🔴 Validation Error(422):
+```
+{
+"detail": [
+		{
+		"loc": [
+			"string",
+			0
+		],
+		"msg": "string",
+		"type": "string"
+		}
+]
+}
+```
 
-Validation Error(422):
-	```{
-  "detail": [
-    {
-      "loc": [
-        "string",
-        0
-      ],
-      "msg": "string",
-      "type": "string"
-    	}
-  	]
-	}```
+## Get Owned Games
+* /user/{user_id}/games
+* GET
+* input:
+```
+user_id (integer)
+```
+* output:
 
-
-
-
-
-**Get Owned Games
-/user/{user_id}/games**
-GET
-
-input:
-	user_id (integer)
-
-output:
-	Successful Response:
-	```[
+#### 🟢 Successful Response:
+```
+[
   {
     "id": 0,
     "owner": {
@@ -93,10 +96,12 @@ output:
       }
     ]
   }
-]```
+]
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -107,19 +112,22 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
 
-**Get Game
-/game/{game_id}**
-GET
+## Get Game
+* /game/{game_id}
+* GET
+* input:
+```
+game_id (integer)
+```
+* output: 
 
-input:
-	game_id (integer)
-
-output:
-	Successful Response(200):
-	```{
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "owner": {
     "id": 0,
@@ -157,10 +165,12 @@ output:
       "description": "string"
     }
   ]
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -171,21 +181,22 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
 
+## Delete Game
+* /game/{game_id}
+* DELETE
+* input:
+```
+game_id (integer)
+```
+* output:
 
-
-**Delete Game
-/game/{game_id}**
-DELETE
-
-input:
-	game_id (integer)
-
-output:
-	Successful Response(200):
-	```{
+#### 🟢 Successful Response(200):
+```
+{
   "cardsDeleted": 0,
   "deletedGame": {
     "id": 0,
@@ -226,10 +237,12 @@ output:
       }
     ]
   }
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -240,19 +253,22 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
 
 
-**Modify Game
-/game/{game_id}**
-PUT
+## Modify Game
+* /game/{game_id}
+* PUT
+* input:
+```
+game_id (integer)
+```
 
-input:
-	game_id (integer)
-	
- Request body (application/json)
-	```{
+#### Request body (application/json)
+```
+{
   "logoURL": "string",
   "background": 0,
   "welcomeTitle": "string",
@@ -262,11 +278,14 @@ input:
   "leaveBody": "string",
   "leaveURL": "string",
   "rounds": 0
-}```
+}
+```
 
-output:
-	Successful Response(200):
-	```{
+* output:
+
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "owner": {
     "id": 0,
@@ -304,10 +323,12 @@ output:
       "description": "string"
     }
   ]
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -318,16 +339,17 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
-	
+}
+```
 
-**Create Game
-/game**
-POST
+## Create Game
+* /game
+* POST
+* input:
 
-input:
-	Request body (application/json)
-	```{
+#### Request body (application/json)
+```
+{
   "ownerId": 0,
   "logoURL": "string",
   "background": 0,
@@ -341,11 +363,13 @@ input:
   "classicCards": [],
   "rounds": 0,
   "matchCards": []
-}```
+}
+```
 
-output:
-	Successful Response(201):
-	```{
+* output:
+#### 🟢 Successful Response(201):
+```
+{
   "id": 0,
   "owner": {
     "id": 0,
@@ -383,11 +407,12 @@ output:
       "description": "string"
     }
   ]
-}```
+}
+```
 
-
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -398,33 +423,39 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
 
-**Create Classic Card
-/classiccard**
-POST
+## Create Classic Card
+* /classiccard
+* POST
+* input:
 
-input:
-	Request body (application/json)
-	```{
+#### Request body (application/json)
+```
+{
   "term": "string",
   "description": "string",
   "gameId": 0
-}```
+}
+```
 
-output:
-	Successful Response(200)	:
-	```{
+* output:
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -435,30 +466,32 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
+## Delete Classic Card
+* /classiccard/{card_id}
+* DELETE
+* input:
+```
+card_id (integer)
+```
+* output:
 
-
-**Delete Classic Card
-/classiccard/{card_id}**
-DELETE
-
-input:
-	card_id (integer)
-
-output:
-	Successful Response(200):
-	```{
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}```
+}
+```
 
-
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -469,35 +502,38 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
-
-
-**Modify Classic Card
-/classiccard/{card_id}**
-PUT
-
-input:
-	card_id(int)
-
-request_body (application/json)
-	```{
+## Modify Classic Card
+* /classiccard/{card_id}
+* PUT
+* input:
+```
+card_id(int)
+```
+#### Request_body (application/json)
+```
+{
   "term": "string",
   "description": "string"
-}```
-
-output:
-	Successful Response(200):
-	```{
+}
+```
+* output:
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": "string",
   "gameId": 0,
   "term": "string",
   "description": "string"
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -508,26 +544,27 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
-
-
-**Create Match Card
-/matchcard**
-POST
-
-input:
-	request_body (application/json):
-	```{
+## Create Match Card
+** /matchcard
+* POST
+* input:
+#### Request_body (application/json):
+```
+{
   "imageURL": "string",
   "name": "string",
   "description": "string",
   "gameId": 0
-}```
+}
+```
 
-output:
-	Successful Response(200):
-	```{
+* output:
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": {
     "id": 0,
@@ -565,11 +602,13 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}```
+}
+```
 
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+ {
   "detail": [
     {
       "loc": [
@@ -580,19 +619,22 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
 
 
-**Delete Match Card
-/matchcard/{card_id}**
-DELETE
-
-input:
-	card_id(int)
-output:
-	Successful Response(200):
-	```{
+## Delete Match Card
+* /matchcard/{card_id}
+* DELETE
+* input:
+```
+card_id(int)
+```
+* output:
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": {
     "id": 0,
@@ -630,10 +672,12 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -644,25 +688,26 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
+}
+```
 
-
-
-**Modify Match Card
-/matchcard/{card_id}**
-PUT
-
-input:
-	request_body (application/json)
-	```{
+## Modify Match Card
+* /matchcard/{card_id}
+* PUT
+* input:
+#### Request_body (application/json)
+```
+{
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}```
+}
+```
 
-output:
-	Successful Response(200):
-	```{
+* output:
+#### 🟢 Successful Response(200):
+```
+{
   "id": 0,
   "game": {
     "id": 0,
@@ -700,10 +745,12 @@ output:
   "imageURL": "string",
   "name": "string",
   "description": "string"
-}```
+}
+```
 
-Validation Error(422):
-	```{
+#### 🔴 Validation Error(422):
+```
+{
   "detail": [
     {
       "loc": [
@@ -714,5 +761,5 @@ Validation Error(422):
       "type": "string"
     }
   ]
-}```
-	
+}
+```
