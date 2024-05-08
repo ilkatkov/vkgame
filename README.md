@@ -1,3 +1,42 @@
+# Запуск БД через докер
+
+#### Создание виртуальной среды
+* ```console
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
+#### Установка пакетов 
+* ```console
+  cd backend
+  pip install -r requirements.txt
+  prisma generate
+  ```
+#### Установка докера
+* https://www.docker.com/get-started/
+#### Запуск БД
+* ```console
+  sudo docker run --name pgdb -e POSTGRES_PASSWORD=12345678 -d -p 5432:5432 postgres
+  ```
+* P.S. Если до этого уже запускали
+  ```console
+  sudo docker run -e POSTGRES_PASSWORD=12345678 -d -p 5432:5432 postgres
+  ```
+* Миграция
+  ```console
+  python3 -m prisma migrate dev
+  ```
+#### Проверка работы БД
+* ```console
+  python3 -m prisma studio
+  ```
+* Открываем http://localhost:5555
+
+#### Запуск API
+* ```console
+  python3 -m uvicorn api.index:app
+  ```
+* Открываем http://localhost:8000/docs
+
 # API Запросы
 
 > ## Основная информация
