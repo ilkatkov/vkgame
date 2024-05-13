@@ -1,9 +1,13 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from .models import *
 from prisma import Prisma
 import prisma.errors
+import os
+import datetime
 
 
 db = Prisma()
@@ -22,6 +26,7 @@ app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_headers=["*"], allow_methods=["*"]
 )
 
+app.mount("/images", StaticFiles(directory="images"), name="images")
 # User-related methods
 
 # Создание пользователя
@@ -234,7 +239,7 @@ async def create_match_card(
 
 # Удаление match-карточки
 @app.delete("/matchcard/{card_id}")
-async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
+async def delete_match_card(card_id: int) -> prisma.models.MatchCard:
     
     card = await db.matchcard.delete({"id": card_id})
     if card is None:
@@ -245,7 +250,7 @@ async def delete_classic_card(card_id: int) -> prisma.models.MatchCard:
 
 # Изменение match-карточки
 @app.put("/matchcard/{card_id}")
-async def modify_classic_card(
+async def modify_match_card(
     card_id: int, request: ModifyMatchCardRequestModel
     ) -> prisma.models.MatchCard:
 
@@ -264,3 +269,24 @@ async def modify_classic_card(
         raise HTTPException(status_code=404, detail="No record could be found")
     
     return card
+
+@app.put("/matchcard/{card_id}/imageURL")
+async def upload_match_card(
+    card_id: int, file: UploadFile = File(...)
+    ) -> prisma.models.MatchCard:
+    
+    now=datetime.datetime.now()
+    try:
+        contents = file.file.read()
+        # здесь склеил путь к файлу хранения
+        path_f = f'{os.path.abspath(os.curdir)}/images/{now}_{file.filename}' 
+        with open(path_f, 'wb') as f:      #Путь картинки
+            f.write(contents)
+        card = await db.matchcard.update(where={"id": card_id}, data={"imageURL":path_f})
+        print(card)
+    except Exception as e:
+        return {"message":str(e)}
+    finally:
+        file.file.close()
+
+    return {"message": f"Successfully uploaded {file.filename}"}
