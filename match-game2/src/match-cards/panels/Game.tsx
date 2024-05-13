@@ -10,9 +10,10 @@ import {
 import React, { useEffect } from "react";
 
 import "./Game.css";
-import { doubleArray, shuffleArray } from "../utils";
-import MatchCard from "../components/MatchCard";
-import { ActivePanel, CardState, GameData } from "../types";
+import { ActivePanel } from "../Index";
+import { GameData } from "../../types";
+import MatchCard, { CardState } from "../components/MatchCard";
+import { doubleArray, shuffleArray } from "../../utils";
 
 type Props = {
   id: string;
@@ -87,7 +88,7 @@ const Game: React.FC<Props> = ({ go, gameData }) => {
           ))}
         </CardGrid>
       </Div>
-      <Title className="game__theme">Тема: найди пару</Title>
+      <Title className="game__theme">Тема: {gameData?.subject}</Title>
       <Div className="game__footer">
         <IconButton>
           <Icon28MenuOutline />

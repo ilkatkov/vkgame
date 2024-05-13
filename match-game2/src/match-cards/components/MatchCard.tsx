@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 
-import { CardState } from "../common";
 import { Card } from "@vkontakte/vkui";
 
-import './MatchCard.css';
+import "./MatchCard.css";
+
+export type CardState = "hidden" | "revealed" | "matched";
 
 type Props = {
   key: number;
@@ -22,15 +23,20 @@ const MatchCard: React.FC<Props> = ({
   const [rerender, setRerender] = useState<boolean>(false);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = () => {
-    let newCardStates = [...cardStates];
-    newCardStates[index] = newCardStates[index] === "hidden" ? "revealed" : "hidden";
+    const newCardStates = [...cardStates];
+    newCardStates[index] =
+      newCardStates[index] === "hidden" ? "revealed" : "hidden";
     setCardStates(newCardStates);
     setRerender(!rerender);
-  }
+  };
 
   return (
     <Card className="card-grid__item" mode="shadow" onClick={handleClick}>
-      <img className={`card-grid__item__img card-grid__item__img--${cardStates[index]}`} src={image} alt="card" />
+      <img
+        className={`card-grid__item__img card-grid__item__img--${cardStates[index]}`}
+        src={image}
+        alt="card"
+      />
     </Card>
   );
 };

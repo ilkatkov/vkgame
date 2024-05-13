@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import bridge, { UserInfo } from "@vkontakte/vk-bridge";
-import { View, SplitLayout, SplitCol } from "@vkontakte/vkui";
-import Game from "./panels/Game";
-import Final from "./panels/Final";
+import { SplitLayout, SplitCol } from "@vkontakte/vkui";
 import { backendURL } from "../settings";
-import { ActivePanel, GameData } from "./types";
+import MatchIndex from "./match-cards/Index";
+import { GameData } from "./types";
+import ClassicIndex from "./classic-cards/ClassicIndex";
 
 export const App = () => {
-  const [activePanel, setActivePanel] = useState<ActivePanel>("game");
-  const [fetchedUser, setUser] = useState<UserInfo | undefined>();
+  const [, setUser] = useState<UserInfo | undefined>();
   const [gameData, setGameData] = useState<GameData | null>(null);
 
   useEffect(() => {
@@ -23,18 +22,16 @@ export const App = () => {
     fetchData();
   }, []);
 
-  const go = (panelName: typeof activePanel) => {
-    setActivePanel(panelName);
-  };
-
   return (
     <SplitLayout>
       {/*popout={popout}*/}
       <SplitCol>
-        <View activePanel={activePanel}>
-          <Game id="game" go={go} gameData={gameData} />
-          <Final id="final" fetchedUser={fetchedUser} gameData={gameData} />
-        </View>
+        {gameData?.gameType == "MATCHCARDS" && (
+          <MatchIndex gameData={gameData} />
+        )}
+        {gameData?.gameType == "CLASSIC" && (
+          <ClassicIndex gameData={gameData} />
+        )}
       </SplitCol>
     </SplitLayout>
   );

@@ -7,7 +7,7 @@ export type GameData = {
   leaveTitle: string;
   leaveBody: string;
   leaveURL: string;
-  gameType: "CLASSIC" | "MATCH";
+  gameType: "CLASSIC" | "MATCHCARDS";
   classicCards: {
     term: string;
     description: string;
@@ -18,7 +18,3 @@ export type GameData = {
     description: string;
   }[];
 };
-
-export type ActivePanel = "game" | "final";
-
-export type CardState = "hidden" | "revealed" | "matched";

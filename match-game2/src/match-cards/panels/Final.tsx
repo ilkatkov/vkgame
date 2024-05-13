@@ -1,10 +1,8 @@
-import { UserInfo } from "@vkontakte/vk-bridge";
 import { Headline, Link, Panel, Title } from "@vkontakte/vkui";
-import { GameData } from "../types";
+import { GameData } from "../../types";
 
 type Props = {
   id: string;
-  fetchedUser: UserInfo | undefined;
   gameData: GameData | null;
 };
 
