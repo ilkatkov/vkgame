@@ -1,9 +1,5 @@
-import eruda from "eruda";
-import erudaCode from "eruda-code";
-import erudaDom from "eruda-dom";
+import eruda from 'eruda';
 
 eruda.init();
-eruda.add(erudaCode);
-eruda.add(erudaDom);
 
 export default eruda;
