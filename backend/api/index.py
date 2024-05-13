@@ -9,7 +9,7 @@ import prisma.errors
 import os
 import datetime
 
-
+DOMAIN = "https://vcb.ilkatkov.ru"
 db = Prisma()
 
 
@@ -275,18 +275,19 @@ async def upload_match_card(
     card_id: int, file: UploadFile = File(...)
     ) -> prisma.models.MatchCard:
     
-    now = datetime.now()
+    now = datetime.datetime.now()
     now = now.strftime("%Y-%m-%d_%H:%M:%S")
     try:
         contents = file.file.read()
         # здесь склеил путь к файлу хранения
-        path_f = f'{os.path.abspath(os.curdir)}/images/{now}_{file.filename}' 
+        path_f = f'{os.path.abspath(os.curdir)}/images/{now}_{file.filename}'
+        path_db = f'{DOMAIN}/images/{now}_{file.filename}'
         with open(path_f, 'wb') as f:      #Путь картинки
             f.write(contents)
-        card = await db.matchcard.update(where={"id": card_id}, data={"imageURL":path_f})
+        card = await db.matchcard.update(where={"id": card_id}, data={"imageURL":path_db})
     except Exception as e:
         return {"message":str(e)}
     finally:
         file.file.close()
 
-    return {"message": f"Successfully uploaded {file.filename}"}
+    return card
