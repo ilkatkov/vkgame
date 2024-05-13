@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, ReactNode, useRef, useState } from "react";
 import {
   Panel,
   // Header,
@@ -10,34 +10,36 @@ import {
   NavIdProps,
   Text,
   Spacing,
+  ScreenSpinner,
 } from "@vkontakte/vkui";
 import { UserInfo } from "@vkontakte/vk-bridge";
 import CardsLogo from "../assets/cardslogo.svg";
 import "./Home.css";
 import { Icon12ChevronRight, Icon16Add } from "@vkontakte/icons";
 
-import Bg1 from "../assets/ (1).png";
-import Bg2 from "../assets/ (2).png";
-import Bg3 from "../assets/ (3).png";
-import Bg4 from "../assets/ (4).png";
-import Bg5 from "../assets/ (5).png";
-import Bg6 from "../assets/ (6).png";
-import Bg7 from "../assets/ (7).png";
-import Bg8 from "../assets/ (8).png";
-import Bg9 from "../assets/ (9).png";
-import Bg10 from "../assets/ (10).png";
 import { backendURL } from "../settings";
 import ClassicCardForm from "./forms/ClassicCardForm";
 import MatchCardForm from "./forms/MatchCardForm";
-const backgrounds = [Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9, Bg10];
+import { ActivePanel } from "../App";
 
 export interface HomeProps extends NavIdProps {
-  go: (panelName: string) => void;
+  go: (panelName: ActivePanel) => void;
   fetchedUser?: UserInfo;
-  setGameId: React.Dispatch<React.SetStateAction<number | null>>;
+  gameIdState: [
+    number | null,
+    React.Dispatch<React.SetStateAction<number | null>>
+  ];
+  setPopout: React.Dispatch<React.SetStateAction<ReactNode>>;
+  id: string;
 }
 
-export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
+export const Home: FC<HomeProps> = ({
+  id,
+  go,
+  fetchedUser,
+  gameIdState,
+  setPopout,
+}) => {
   // MARK: logos
 
   const [selectedLogo, setSelectedLogo] = useState<string | File>("");
@@ -67,10 +69,19 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
   const [welcomeTitle, setWelcomeTitle] = useState<string>("");
   const [welcomeBody, setWelcomeBody] = useState<string>("");
 
+  // MARK: leave
+
+  const [leaveTitle, setLeaveTitle] = useState<string>("");
+  const [leaveBody, setLeaveBody] = useState<string>("");
+  const [leaveURL, setLeaveURL] = useState<string>("");
+
   // MARK: background
 
-  const [background, setBackground] = useState<string>("background");
-  const BackgroundChip: React.FC<{ bg: string }> = ({ bg }) => {
+  const [background, setBackground] = useState<number | null>(null);
+  const BackgroundChip: React.FC<{ bgURL: string; bg: number }> = ({
+    bg,
+    bgURL,
+  }) => {
     return (
       <div
         className={
@@ -82,7 +93,7 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
           console.log(bg);
         }}
       >
-        <img src={bg} alt="" />
+        <img src={bgURL} alt="" />
       </div>
     );
   };
@@ -118,7 +129,6 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
         }
         onClick={() => {
           setGameType(gameType == chipGameType ? null : chipGameType);
-          // setCards([]);
         }}
       >
         {chipGameType}
@@ -134,6 +144,25 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
       description: string;
     }[]
   >([]);
+
+  // MARK: match cards
+
+  const [rounds, setRounds] = useState<number>(1);
+  const RoundChip: React.FC<{ chipRounds: number }> = ({ chipRounds }) => {
+    return (
+      <div
+        className={
+          "selectchip" + (chipRounds == rounds ? " selectchip_active" : "")
+        }
+        onClick={() => {
+          setRounds(rounds == chipRounds ? 1 : chipRounds);
+          // setCards([]);
+        }}
+      >
+        {chipRounds}
+      </div>
+    );
+  };
 
   const matchCardsState = useState<
     {
@@ -220,11 +249,53 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
             }}
           ></textarea>
           <Spacing size={12} />
+          {/* MARK: leave */}
+          <Text className="inputlabel">Сообщение по завершении игры:</Text>
+          <textarea
+            className="textinput"
+            cols={50}
+            rows={1}
+            maxLength={45}
+            placeholder="Заголовок"
+            value={leaveTitle}
+            onChange={(e) => {
+              setLeaveTitle(e.currentTarget.value);
+            }}
+          ></textarea>
+          <Spacing size={10} />
+          <textarea
+            className="textinput"
+            cols={50}
+            rows={2}
+            maxLength={95}
+            placeholder="Тело"
+            value={leaveBody}
+            onChange={(e) => {
+              setLeaveBody(e.currentTarget.value);
+            }}
+          ></textarea>
+          <Spacing size={10} />
+          <textarea
+            className="textinput"
+            cols={50}
+            rows={1}
+            maxLength={45}
+            placeholder="Ссылка (на сообщество, сайт, приложение и т.п.)"
+            value={leaveURL}
+            onChange={(e) => {
+              setLeaveURL(e.currentTarget.value);
+            }}
+          ></textarea>
+          <Spacing size={12} />
           {/* MARK: background */}
           <Text className="inputlabel">Выберите фон:</Text>
           <div className="horizontaldiv">
-            {backgrounds.map((bg, index) => (
-              <BackgroundChip bg={bg} key={index} />
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bg, index) => (
+              <BackgroundChip
+                bg={index + 1}
+                bgURL={`${backendURL}/images/${bg}.png`}
+                key={index}
+              />
             ))}
           </div>
           <Spacing size={12} />
@@ -252,6 +323,13 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
           )}
           {gameType == "MATCHCARDS" && (
             <>
+              <Text className="inputlabel">Выберите количество раундов:</Text>
+              <div className="horizontaldiv">
+                <RoundChip chipRounds={1} />
+                <RoundChip chipRounds={2} />
+                <RoundChip chipRounds={3} />
+              </div>
+              <Spacing size={12} />
               <MatchCardForm matchCardsState={matchCardsState} />
             </>
           )}
@@ -261,6 +339,7 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
               className="continue"
               onClick={(e) => {
                 e.preventDefault();
+                setPopout(<ScreenSpinner size="large" />);
                 if (fetchedUser && "id" in fetchedUser) {
                   fetch(`${backendURL}/game`, {
                     method: "POST",
@@ -271,30 +350,61 @@ export const Home: FC<HomeProps> = ({ id, go, fetchedUser, setGameId }) => {
                     body: JSON.stringify({
                       ownerId: fetchedUser.id,
                       logoURL: "foo", // TODO
-                      background: Number(
-                        background.slice(
-                          background.indexOf("(") + 1,
-                          background.indexOf(")")
-                        )
-                      ),
+                      background: background,
                       welcomeTitle: welcomeTitle,
                       welcomeBody: welcomeBody,
                       subject: subject,
-                      leaveTitle: "foo", // TODO
-                      leaveBody: "foo", // TODO
-                      leaveURL: "foo", // TODO
+                      leaveTitle: leaveTitle,
+                      leaveBody: leaveBody,
+                      leaveURL: leaveURL,
                       gameType: gameType,
-                      classicCards: [], // TODO
-                      rounds: 0, // TODO
-                      matchCards: [], // TODO
+                      classicCards: classicCardsState[0],
+                      rounds: rounds,
+                      matchCards: matchCardsState[0].map((card) => {
+                        return {
+                          name: card.name,
+                          description: card.description,
+                          imageURL: "foo", // TODO
+                        };
+                      }),
                     }),
                   })
                     .then((res) => {
                       if (res.ok) return res.json();
                     })
                     .then((json) => {
-                      setGameId(json.id);
-                      go("persik");
+                      console.log(json);
+                      if (gameType == "MATCHCARDS") {
+                        console.log("sending images");
+                        const promises: Promise<unknown>[] = [];
+                        matchCardsState[0].forEach((card, index) => {
+                          console.log("sending img #", index);
+                          console.log(card);
+                          if (!card.image) {
+                            console.error("no file found for:");
+                            console.table(card);
+                            return;
+                          }
+                          const data = new FormData();
+                          data.append("file", card.image);
+                          promises.push(
+                            fetch(
+                              `${backendURL}/matchcard/${json.matchCards[index].id}/imageURL`,
+                              {
+                                method: "PUT",
+                                mode: "cors",
+                                body: data,
+                              }
+                            )
+                          );
+                        });
+                        Promise.allSettled(promises).then(() => {
+                          console.log("all images uploaded");
+                        });
+                      }
+                      gameIdState[1](json.id);
+                      setPopout(null);
+                      go("final");
                     });
                 }
               }}
