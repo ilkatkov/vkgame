@@ -3,52 +3,38 @@ import HeaderLogo from "../components/HeaderLogo";
 import exit from "../img/exit.svg";
 import { DescCard, WordCard } from "../components/cards";
 import { ActivePanel } from "../ClassicIndex";
+import { GameData } from "../../types";
 
 const colors = ["pink", "blue", "violet", "pink", "blue", "violet"];
 
-const words = ["Адаптив", "Бэкап", "Дамп", "Деплой", "Капча", "Редирект"];
-const pointsEnd = words.length;
-
-const values = [
-  "процесс адаптации веб-страниц или веб-интерфейса к использованию на экранах различных устройств",
-  "резервное копирование проекта для того, чтобы при каких-либо сбоях иметь возможность восстановить данные",
-  "файл, содержащий резервную копию системы/базы данных, актуальную на момент его создания",
-  "развертывание программного обеспечения на выбранный сервер, где оно будет работать",
-  "картинка, предназначенная для проверки пользователя на предмет его реальности",
-  "автоматическое перенаправление пользователя куда-либо: на другой сайт или страницу",
-];
-
 type Props = {
   go: (panelName: ActivePanel) => void;
+  gameData: GameData | null;
   id: string;
 };
 
-export default function Cards({ go }: Props) {
+export default function Cards({ go, gameData }: Props) {
+  const [words, setWords] = useState<string[]>([]);
+  const [values, setValues] = useState<string[]>([]);
+  const [pointsEnd, setPointsEnd] = useState(0);
   const [popupActive, setPopupActive] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [points, setPoints] = useState(0);
-  const [, setPrevIndex] = useState<number | null>(null);
-  const [, setPrevValue] = useState<string | null>(null);
   const [shuffledValues, setShuffledValues] = useState<string[]>([]);
-  const [wordCardsInGame, setWordCardsInGame] = useState<boolean[]>(
-    Array(pointsEnd).fill(true)
-  );
-
+  const [wordCardsInGame, setWordCardsInGame] = useState<boolean[]>([]);
   const wordCardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!gameData) return;
+    const words = gameData.classicCards.map((card) => card.term);
+    setWords(words);
+    const values = gameData.classicCards.map((card) => card.description);
+    setValues(values);
+    const pointsEnd = words.length;
+    setPointsEnd(pointsEnd);
     setShuffledValues(shuffled(values));
-    setPrevIndex(
-      shuffledValues.indexOf(
-        "процесс адаптации веб-страниц или веб-интерфейса к использованию на экранах различных устройств"
-      )
-    );
-    setPrevValue(shuffledValues[0]);
-  }, []);
-
-  useEffect(() => {
-    console.log("popupAcitve changed: ", popupActive);
-  }, [popupActive]);
+    setWordCardsInGame(Array(pointsEnd).fill(true));
+  }, [gameData]);
 
   return (
     <>

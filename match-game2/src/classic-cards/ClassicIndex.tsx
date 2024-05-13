@@ -29,8 +29,8 @@ export default function ClassicIndex({ gameData }: Props) {
         welcomeTitle={gameData?.welcomeTitle ?? ""}
         welcomeBody={gameData?.welcomeBody ?? ""}
       />
-      <Tutorial id="tutorial" go={go} />
-      <Cards id="cards" go={go} />
+      <Tutorial id="tutorial" go={go} gameData={gameData} />
+      <Cards id="cards" go={go} gameData={gameData} />
       <Finish
         id="finish"
         leaveTitle={gameData?.leaveTitle ?? ""}

@@ -2,14 +2,17 @@ import { useEffect } from "react";
 import HeaderLogo from "../components/HeaderLogo";
 import exit from "../img/exit.svg";
 import { ActivePanel } from "../ClassicIndex";
+import { GameData } from "../../types";
 
 type Props = {
   go: (panelName: ActivePanel) => void;
+  gameData: GameData | null;
   id: string;
 };
 
-export default function Tutorial({ go }: Props) {
+export default function Tutorial({ go, gameData }: Props) {
   useEffect(() => {
+    if (!gameData) return;
     const popupBg = document.querySelector<HTMLDivElement>(".popup__bg");
     const popup = document.querySelector<HTMLFormElement>(".popup");
     const tutorialDescCard =
@@ -19,7 +22,7 @@ export default function Tutorial({ go }: Props) {
     const popupBox = document.getElementById("popupBox");
     const btnNext = document.getElementById("btnNext");
 
-    const words = ["Адаптив", "Бэкап", "Дамп", "Деплой", "Капча", "Редирект"];
+    const words = gameData?.classicCards.map((card) => card.term);
     const wordCards = Array.from(document.getElementsByClassName("wordCard"));
 
     let tutorial = true;
@@ -49,8 +52,7 @@ export default function Tutorial({ go }: Props) {
         tutorialDescCard.classList.remove("tutorialCard");
         setTimeout(function () {
           closePopup.classList.remove("hidden");
-          popupText.innerHTML =
-            "процесс адаптации веб-страниц или веб-интерфейса к использованию на экранах различных устройств";
+          popupText.innerHTML = gameData.classicCards[0].description;
           popupBg.classList.add("active");
           popup.classList.add("active");
 
@@ -70,7 +72,7 @@ export default function Tutorial({ go }: Props) {
                 let coordX = startX;
                 let time = setInterval(frame, 5);
                 function frame() {
-                  if (tutorial && tutorialDescCard) {
+                  if (tutorial && tutorialDescCard && gameData) {
                     if (coordX <= 40) {
                       tutorialDescCard.style.left = startX + "px";
                       coordX = startX;
@@ -78,7 +80,7 @@ export default function Tutorial({ go }: Props) {
                       tutorialDescCard.classList.add("hidden");
                       wordCards[0].innerHTML = "";
                       setTimeout(function () {
-                        wordCards[0].innerHTML = "Адаптив";
+                        wordCards[0].innerHTML = gameData.classicCards[0].term;
                         tutorialDescCard.classList.remove("hidden");
                         time = setInterval(frame, 5);
                       }, 1000);
@@ -112,7 +114,7 @@ export default function Tutorial({ go }: Props) {
         }, 500);
       });
     }
-  }, [go]);
+  }, [go, gameData]);
 
   return (
     <>
