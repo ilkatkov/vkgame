@@ -275,7 +275,8 @@ async def upload_match_card(
     card_id: int, file: UploadFile = File(...)
     ) -> prisma.models.MatchCard:
     
-    now=datetime.datetime.now()
+    now = datetime.now()
+    now = now.strftime("%Y-%m-%d_%H:%M:%S")
     try:
         contents = file.file.read()
         # здесь склеил путь к файлу хранения
@@ -283,7 +284,6 @@ async def upload_match_card(
         with open(path_f, 'wb') as f:      #Путь картинки
             f.write(contents)
         card = await db.matchcard.update(where={"id": card_id}, data={"imageURL":path_f})
-        print(card)
     except Exception as e:
         return {"message":str(e)}
     finally:
