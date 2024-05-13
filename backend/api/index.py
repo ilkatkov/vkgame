@@ -120,7 +120,7 @@ async def create_game(request: CreateGameRequestModel) -> prisma.models.Game:
         },
         {
             "matchCards": True,
-            "ClassicCards": True,
+            "classicCards": True,
         }
     )
 
