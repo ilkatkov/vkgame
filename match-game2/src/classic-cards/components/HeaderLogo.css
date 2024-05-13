@@ -1,0 +1,23 @@
+header {
+  margin: 40px;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+header>div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+header>p {
+  font-size: 14.5px;
+}
+
+#vkLogo {
+  height: 40px;
+  width: 40px;
+  margin-right: 8px;
+}

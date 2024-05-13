@@ -1,0 +1,258 @@
+@font-face {
+  font-family: "VK Sans Display";
+  src: url("./fonts/5795a47e252d16c82bb79fa354b224db.eot"); /* IE9*/
+  src: url("./fonts/5795a47e252d16c82bb79fa354b224db.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/5795a47e252d16c82bb79fa354b224db.woff2")
+      format("woff2"),
+    /* chrome、firefox */ url("./fonts/5795a47e252d16c82bb79fa354b224db.woff")
+      format("woff"),
+    /* chrome、firefox */ url("./fonts/5795a47e252d16c82bb79fa354b224db.ttf")
+      format("truetype"),
+    /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+      url("./fonts/5795a47e252d16c82bb79fa354b224db.svg#VK Sans Display")
+      format("svg"); /* iOS 4.1- */
+}
+
+body {
+  background-color: #0077ff !important;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+a,
+a:hover,
+a:active,
+a:before {
+  text-decoration: none;
+}
+
+#page {
+  margin: 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  height: 100vh;
+}
+
+header {
+  margin: 40px;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+header > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+header > p {
+  font-size: 14.5px;
+}
+
+#vkLogo {
+  height: 40px;
+  width: 40px;
+  margin-right: 8px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  touch-action: none;
+  -ms-touch-action: none;
+}
+
+h1 {
+  margin: 0;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 60px;
+  color: #ffffff !important;
+}
+
+p {
+  margin: 0;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 34px;
+  color: #ffffff !important;
+}
+
+h1 + p {
+  margin-top: 20px;
+}
+
+#infoBox {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+button {
+  -webkit-transition: all 0.1s ease;
+  -moz-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+  transition: all 0.1s ease;
+  margin-top: 36px;
+  width: 258px;
+  height: 64px;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5 !important;
+  border-radius: 14px;
+  border: none;
+  color: black !important;
+}
+
+.next {
+  width: 160px;
+  height: 40px;
+  margin-top: 0px;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 28px;
+  background: #0077ff !important;
+  border-radius: 14px;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 110%;
+  color: #ffffff !important;
+}
+
+button:active {
+  background: #dedede !important;
+}
+
+.cardsBox {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.words,
+.cards {
+  display: flex;
+  flex-direction: column;
+}
+
+.wordCard {
+  height: calc(100vh / 12);
+  width: calc(100vw / 3);
+  max-width: 200px;
+  background: #ffffff !important;
+  border-radius: 24px;
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #0077ff !important;
+}
+
+.descCard {
+  -webkit-touch-callout: none;
+  height: calc(100vh / 12);
+  width: calc(100vw / 3);
+  max-width: 200px;
+  border-radius: 24px;
+  background-position: center;
+  background-size: cover;
+}
+
+.words > .wordCard + .wordCard {
+  margin-top: 16px;
+}
+.cards > .descCard + .descCard {
+  margin-top: 16px;
+}
+
+.pink {
+  background-image: url("./img/pink_card.svg");
+}
+
+.blue {
+  background-image: url("./img/blue_card.svg");
+}
+
+.violet {
+  background-image: url("./img/violet_card.svg");
+}
+
+.tutorialCard {
+  z-index: 999;
+}
+
+.hidden {
+  display: none;
+}
+
+.glowing {
+  animation: glowing 1300ms infinite;
+}
+
+@keyframes glowing {
+  0% {
+    background-color: #00eaff;
+    box-shadow: 0 0 8px #00eaff;
+  }
+  50% {
+    background-color: #00eaff;
+    box-shadow: 0 0 48px #00eaff;
+  }
+  100% {
+    background-color: #00eaff;
+    box-shadow: 0 0 8px #00eaff;
+  }
+}
+
+#popupBox {
+  padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.popupStart {
+  padding: 20px 0 !important;
+}
+
+#popupText {
+  font-family: "VK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 120%;
+  color: #0077ff !important;
+}
+
+#popupBox > button {
+  margin-top: 20px;
+}
