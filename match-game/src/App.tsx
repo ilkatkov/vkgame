@@ -1,41 +1,46 @@
-import React, { useState, useEffect, ReactNode, MouseEventHandler } from 'react';
-import bridge, { UserInfo } from '@vkontakte/vk-bridge';
-import { View, ScreenSpinner, AdaptivityProvider, AppRoot, ConfigProvider, SplitLayout, SplitCol, Panel } from '@vkontakte/vkui';
-import '@vkontakte/vkui/dist/vkui.css';
+import { useState, useEffect } from "react";
+import bridge, { UserInfo } from "@vkontakte/vk-bridge";
+import { SplitLayout, SplitCol } from "@vkontakte/vkui";
+import { backendURL } from "../settings";
+import MatchIndex from "./match-cards/Index";
+import { GameData } from "./types";
+import ClassicIndex from "./classic-cards/ClassicIndex";
 
-import Game from './panels/Game';
-import { ActivePanel } from './common';
+export const App = () => {
+  const [, setUser] = useState<UserInfo | undefined>();
+  const [gameData, setGameData] = useState<GameData | null>(null);
 
-const App = () => {
-	const [activePanel, setActivePanel] = useState<ActivePanel>('game');
-	const [fetchedUser, setUser] = useState<UserInfo | undefined>();
-	// const [popout, setPopout] = useState<ReactNode | null>(<ScreenSpinner size='large' />);
+  useEffect(() => {
+    async function fetchData() {
+      const user = await bridge.send("VKWebAppGetUserInfo");
+      setUser(user);
+      // setPopout(null);
+      const gameData = await getGameData(location.hash.slice(1));
+      console.log(gameData);
+      setGameData(gameData);
+    }
+    fetchData();
+  }, []);
 
-	useEffect(() => {
-		async function fetchData() {
-			const user = await bridge.send('VKWebAppGetUserInfo');
-			setUser(user);
-			// setPopout(null);
-		}
-		fetchData();
-	}, []);
+  return (
+    <SplitLayout>
+      {/*popout={popout}*/}
+      <SplitCol>
+        {gameData?.gameType == "MATCHCARDS" && (
+          <MatchIndex gameData={gameData} />
+        )}
+        {gameData?.gameType == "CLASSIC" && (
+          <ClassicIndex gameData={gameData} />
+        )}
+      </SplitCol>
+    </SplitLayout>
+  );
+};
 
-	return (
-		<ConfigProvider>
-			<AdaptivityProvider>
-				<AppRoot>
-					<SplitLayout> {/*popout={popout}*/ }
-						<SplitCol>
-							<View activePanel={activePanel}>
-								<Game id='game' setActivePanel={setActivePanel} />
-								<Panel id='final'>you won!</Panel>
-							</View>
-						</SplitCol>
-					</SplitLayout>
-				</AppRoot>
-			</AdaptivityProvider>
-		</ConfigProvider>
-	);
+async function getGameData(gameId: string) {
+  const response = await fetch(backendURL + "game/" + gameId);
+  if (!response.ok) {
+    return null;
+  }
+  return (await response.json()) as GameData;
 }
-
-export default App;
