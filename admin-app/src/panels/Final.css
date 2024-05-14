@@ -1,0 +1,43 @@
+@import url(./common.css);
+
+.final-wrapper {
+  background-color: "#999999";
+  min-height: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.white-box {
+  background-color: white;
+  min-width: 550px;
+  border-radius: 16.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  padding: 33px;
+}
+
+.final-title {
+  font-family: "VK Sans Display Medium", Helvetica, sans-serif;
+  font-size: 28px;
+  color: black;
+  margin-bottom: -5px;
+}
+
+.final-body {
+  font-family: "VK Sans Display Regular", Helvetica, sans-serif;
+  font-size: 18px;
+  color: #6d7885;
+}
+
+.game-link {
+  color: black;
+}
+
+.final-share {
+  margin-top: 10px;
+  background-color: #0077ff !important;
+  color: white !important;
+}

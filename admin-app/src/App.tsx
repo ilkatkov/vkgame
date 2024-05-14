@@ -2,7 +2,7 @@ import { useState, useEffect, ReactNode } from "react";
 import bridge, { UserInfo } from "@vkontakte/vk-bridge";
 import { View, SplitLayout, SplitCol, ScreenSpinner } from "@vkontakte/vkui";
 
-import { Persik, Home } from "./panels";
+import { Home } from "./panels";
 import { backendURL } from "./settings";
 import Final from "./panels/Final";
 
@@ -15,7 +15,7 @@ export const App = () => {
     <ScreenSpinner size="large" />
   );
 
-  const gameIdState = useState<number | null>(null);
+  const gameIdState = useState<number | null>(null); // TO BE CHANGED!!!
 
   useEffect(() => {
     async function fetchData() {

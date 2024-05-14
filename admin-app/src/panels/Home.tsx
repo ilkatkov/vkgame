@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useRef, useState } from "react";
+import React, { FC, ReactNode /*, useRef*/, useEffect, useState } from "react";
 import {
   Panel,
   // Header,
@@ -15,7 +15,7 @@ import {
 import { UserInfo } from "@vkontakte/vk-bridge";
 import CardsLogo from "../assets/cardslogo.svg";
 import "./Home.css";
-import { Icon12ChevronRight, Icon16Add } from "@vkontakte/icons";
+import { Icon12ChevronRight /*, Icon16Add*/ } from "@vkontakte/icons";
 
 import { backendURL } from "../settings";
 import ClassicCardForm from "./forms/ClassicCardForm";
@@ -42,27 +42,27 @@ export const Home: FC<HomeProps> = ({
 }) => {
   // MARK: logos
 
-  const [selectedLogo, setSelectedLogo] = useState<string | File>("");
-  const [logos, setLogos] = useState<(string | null)[]>([
-    "https://corp.vkcdn.ru/media/projects/logos/projects-logo-1.svg",
-    "https://corp.vkcdn.ru/media/projects/logos/vk-clips-v2.png",
-    null,
-  ]);
-  const LogoChip: React.FC<{ image: string | null }> = ({ image }) => {
-    return image ? (
-      <div
-        className={`logochip ${image == selectedLogo ? "logochip_active" : ""}`}
-        onClick={(e) => {
-          e.preventDefault();
-          setSelectedLogo(image);
-        }}
-      >
-        <img src={image} />
-      </div>
-    ) : null;
-  };
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedLogo, setUploadedLogo] = useState<File | null>();
+  // const [selectedLogo, setSelectedLogo] = useState<string | File>("");
+  // const [logos, setLogos] = useState<(string | null)[]>([
+  //   "https://corp.vkcdn.ru/media/projects/logos/projects-logo-1.svg",
+  //   "https://corp.vkcdn.ru/media/projects/logos/vk-clips-v2.png",
+  //   null,
+  // ]);
+  // const LogoChip: React.FC<{ image: string | null }> = ({ image }) => {
+  //   return image ? (
+  //     <div
+  //       className={`logochip ${image == selectedLogo ? "logochip_active" : ""}`}
+  //       onClick={(e) => {
+  //         e.preventDefault();
+  //         setSelectedLogo(image);
+  //       }}
+  //     >
+  //       <img src={image} />
+  //     </div>
+  //   ) : null;
+  // };
+  // const logoInputRef = useRef<HTMLInputElement>(null);
+  // const [uploadedLogo, setUploadedLogo] = useState<File | null>();
 
   // MARK: welcome
 
@@ -118,7 +118,7 @@ export const Home: FC<HomeProps> = ({
 
   // MARK: gametype
 
-  const [gameType, setGameType] = useState<string | null>("Мэтч-карточки");
+  const [gameType, setGameType] = useState<string | null>(null);
   const GameTypeChip: React.FC<{ chipGameType: string }> = ({
     chipGameType,
   }) => {
@@ -148,21 +148,21 @@ export const Home: FC<HomeProps> = ({
   // MARK: match cards
 
   const [rounds, setRounds] = useState<number>(1);
-  const RoundChip: React.FC<{ chipRounds: number }> = ({ chipRounds }) => {
-    return (
-      <div
-        className={
-          "selectchip" + (chipRounds == rounds ? " selectchip_active" : "")
-        }
-        onClick={() => {
-          setRounds(rounds == chipRounds ? 1 : chipRounds);
-          // setCards([]);
-        }}
-      >
-        {chipRounds}
-      </div>
-    );
-  };
+  // const RoundChip: React.FC<{ chipRounds: number }> = ({ chipRounds }) => {
+  //   return (
+  //     <div
+  //       className={
+  //         "selectchip" + (chipRounds == rounds ? " selectchip_active" : "")
+  //       }
+  //       onClick={() => {
+  //         setRounds(rounds == chipRounds ? 1 : chipRounds);
+  //         // setCards([]);
+  //       }}
+  //     >
+  //       {chipRounds}
+  //     </div>
+  //   );
+  // };
 
   const matchCardsState = useState<
     {
@@ -171,6 +171,34 @@ export const Home: FC<HomeProps> = ({
       description: string;
     }[]
   >([]);
+
+  const [continueDisabled, setContinueDisabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (
+      welcomeTitle &&
+      welcomeBody &&
+      leaveTitle &&
+      leaveBody &&
+      leaveURL &&
+      background &&
+      subject &&
+      gameType
+    ) {
+      setContinueDisabled(false);
+    } else {
+      setContinueDisabled(true);
+    }
+  }, [
+    welcomeTitle,
+    welcomeBody,
+    leaveTitle,
+    leaveBody,
+    leaveURL,
+    background,
+    subject,
+    gameType,
+  ]);
 
   return (
     <Panel id={id}>
@@ -183,7 +211,7 @@ export const Home: FC<HomeProps> = ({
         <img className="cardslogo" src={CardsLogo} alt="VK Карточки" />
         <div className="formwrapper">
           {/* MARK: logos */}
-          <Text className="inputlabel">Выберите логотип:</Text>
+          {/* <Text className="inputlabel">Выберите логотип:</Text>
           <div className="horizontaldiv">
             {logos.map((image, index) => (
               <LogoChip image={image} key={index} />
@@ -222,7 +250,7 @@ export const Home: FC<HomeProps> = ({
               }}
             />
           </div>
-          <Spacing size={12} />
+          <Spacing size={12} /> */}
           {/* MARK: welcome */}
           <Text className="inputlabel">Приветственное сообщение:</Text>
           <textarea
@@ -323,22 +351,23 @@ export const Home: FC<HomeProps> = ({
           )}
           {gameType == "MATCHCARDS" && (
             <>
-              <Text className="inputlabel">Выберите количество раундов:</Text>
+              {/* <Text className="inputlabel">Выберите количество раундов:</Text>
               <div className="horizontaldiv">
                 <RoundChip chipRounds={1} />
                 <RoundChip chipRounds={2} />
                 <RoundChip chipRounds={3} />
               </div>
-              <Spacing size={12} />
+              <Spacing size={12} /> */}
               <MatchCardForm matchCardsState={matchCardsState} />
             </>
           )}
           <Spacing size={24} />
           <div className="horizontaldiv toright">
             <div
-              className="continue"
+              className={`continue ${continueDisabled && "disabled"}`}
               onClick={(e) => {
                 e.preventDefault();
+                if (continueDisabled) return;
                 setPopout(<ScreenSpinner size="large" />);
                 if (fetchedUser && "id" in fetchedUser) {
                   fetch(`${backendURL}/game`, {
