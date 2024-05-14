@@ -2,12 +2,12 @@
 
 #### Создание виртуальной среды
 * ```console
+  cd backend
   python3 -m venv venv
   source venv/bin/activate
   ```
 #### Установка пакетов 
 * ```console
-  cd backend
   pip install -r requirements.txt
   prisma generate
   ```
