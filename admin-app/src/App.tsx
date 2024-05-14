@@ -4,15 +4,18 @@ import { View, SplitLayout, SplitCol, ScreenSpinner } from "@vkontakte/vkui";
 
 import { Persik, Home } from "./panels";
 import { backendURL } from "./settings";
+import Final from "./panels/Final";
+
+export type ActivePanel = "home" | "final";
 
 export const App = () => {
-  const [activePanel, setActivePanel] = useState("home");
+  const [activePanel, setActivePanel] = useState<ActivePanel>("home");
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>(
     <ScreenSpinner size="large" />
   );
 
-  const [createdGameId, setGameId] = useState<number | null>(null);
+  const gameIdState = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -29,7 +32,7 @@ export const App = () => {
     fetchData();
   }, []);
 
-  const go = (panelName: string) => {
+  const go = (panelName: ActivePanel) => {
     setActivePanel(panelName);
   };
 
@@ -41,9 +44,10 @@ export const App = () => {
             id="home"
             fetchedUser={fetchedUser}
             go={go}
-            setGameId={setGameId}
+            gameIdState={gameIdState}
+            setPopout={setPopout}
           />
-          <Persik id="persik" go={go} />
+          <Final id="final" createdGameId={gameIdState[0]} />
         </View>
       </SplitCol>
     </SplitLayout>
