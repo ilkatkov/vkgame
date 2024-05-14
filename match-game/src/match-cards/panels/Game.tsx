@@ -1,4 +1,4 @@
-import { Icon28MenuOutline, Icon28ShareOutline } from "@vkontakte/icons";
+import { Icon28ShareOutline } from "@vkontakte/icons";
 import {
   CardGrid,
   Div,
@@ -14,6 +14,8 @@ import { ActivePanel } from "../Index";
 import { GameData } from "../../types";
 import MatchCard, { CardState } from "../components/MatchCard";
 import { doubleArray, shuffleArray } from "../../utils";
+import HorizonalLogo from "../horizontallogo.svg";
+import bridge from "@vkontakte/vk-bridge";
 
 type Props = {
   id: string;
@@ -74,9 +76,18 @@ const Game: React.FC<Props> = ({ go, gameData }) => {
 
   return (
     <Panel className="game">
-      <PanelHeader>Найди пару</PanelHeader>
+      <PanelHeader>
+        <img src={HorizonalLogo} alt="VK Карточки" />
+      </PanelHeader>
+      <Title className="game__theme">Тема: {gameData?.subject}</Title>
       <Div className="game__content">
-        <CardGrid className="card-grid" size="s">
+        <CardGrid
+          className="card-grid"
+          size="s"
+          style={{
+            marginTop: "40px",
+          }}
+        >
           {images.map((image, index) => (
             <MatchCard
               key={index}
@@ -88,12 +99,19 @@ const Game: React.FC<Props> = ({ go, gameData }) => {
           ))}
         </CardGrid>
       </Div>
-      <Title className="game__theme">Тема: {gameData?.subject}</Title>
       <Div className="game__footer">
-        <IconButton>
-          <Icon28MenuOutline />
-        </IconButton>
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            bridge
+              .send("VKWebAppShare", {
+                link: "https://m.vk.com/app51917371" + location.hash,
+              })
+              .catch((error) => {
+                // Ошибка
+                console.error(error);
+              });
+          }}
+        >
           <Icon28ShareOutline />
         </IconButton>
       </Div>

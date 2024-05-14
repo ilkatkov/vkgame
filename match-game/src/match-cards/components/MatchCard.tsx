@@ -24,6 +24,7 @@ const MatchCard: React.FC<Props> = ({
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = () => {
     const newCardStates = [...cardStates];
+    if (newCardStates[index] == "matched") return;
     newCardStates[index] =
       newCardStates[index] === "hidden" ? "revealed" : "hidden";
     setCardStates(newCardStates);

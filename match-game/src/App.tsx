@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import bridge, { UserInfo } from "@vkontakte/vk-bridge";
-import { SplitLayout, SplitCol } from "@vkontakte/vkui";
+import {
+  SplitLayout,
+  SplitCol,
+  Panel,
+  PanelHeader,
+  Group,
+  Title,
+} from "@vkontakte/vkui";
 import { backendURL } from "../settings";
 import MatchIndex from "./match-cards/Index";
 import { GameData } from "./types";
@@ -21,6 +28,23 @@ export const App = () => {
     }
     fetchData();
   }, []);
+
+  if (!location.hash.slice(1)) {
+    return (
+      <SplitLayout>
+        <SplitCol>
+          <Panel>
+            <PanelHeader>Ошибка</PanelHeader>
+            <Group>
+              <Title>
+                ID игры не найден. Используйте действительный QR-код
+              </Title>
+            </Group>
+          </Panel>
+        </SplitCol>
+      </SplitLayout>
+    );
+  }
 
   return (
     <SplitLayout>
