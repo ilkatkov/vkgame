@@ -295,3 +295,25 @@ async def upload_match_card(
         file.file.close()
 
     return card
+
+@app.put("/game/{game_id}/logoURL")
+async def upload_game(
+    game_id: int, file: UploadFile = File(...)
+    ) -> prisma.models.Game:
+    
+    now = datetime.datetime.now()
+    now = now.strftime("%Y-%m-%d_%H:%M:%S")
+    try:
+        contents = file.file.read()
+        # здесь склеил путь к файлу хранения
+        path_f = f'{os.path.abspath(os.curdir)}/images/{now}_{file.filename}'
+        path_db = f'{DOMAIN}/images/{now}_{file.filename}'
+        with open(path_f, 'wb') as f:      #Путь картинки
+            f.write(contents)
+        game = await db.game.update(where={"id": game_id}, data={"logoURL":path_db})
+    except Exception as e:
+        return {"message":str(e)}
+    finally:
+        file.file.close()
+
+    return game
