@@ -1,5 +1,4 @@
-import './HeaderLogo.css';
-import logo from '../img/logo.svg';
+import logo from "../img/logo.svg";
 
 export default function HeaderLogo() {
   return (
@@ -8,7 +7,7 @@ export default function HeaderLogo() {
         <img id="vkLogo" src={logo} />
         <p>Карточки</p>
       </div>
-      <p>амбассадорский проект</p>
+      <p>проект Сириус.Лето</p>
     </header>
   );
 }

@@ -1,5 +1,3 @@
-import { Panel } from "@vkontakte/vkui";
-
 type Props = {
   id: string;
   leaveTitle: string;
@@ -9,7 +7,7 @@ type Props = {
 
 export default function Finish(props: Props) {
   return (
-    <Panel id={props.id}>
+    <>
       <div id="page">
         <section>
           <div id="infoBox">
@@ -17,10 +15,10 @@ export default function Finish(props: Props) {
             <p>{props.leaveBody}</p>
           </div>
           <a href={props.leaveURL}>
-            <button>Продолжить</button>
+            <button className="classic">Продолжить</button>
           </a>
         </section>
       </div>
-    </Panel>
+    </>
   );
 }

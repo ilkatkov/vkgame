@@ -8,6 +8,10 @@ type Props = {
 };
 
 export default function Finish(props: Props) {
+  import("../../classic-cards/style.css");
+  import("../../classic-cards/popup.css");
+  import("../../classic-cards/components/HeaderLogo.css");
+
   return (
     <div
       id={props.id}
@@ -22,7 +26,7 @@ export default function Finish(props: Props) {
             <p>{props.leaveBody}</p>
           </div>
           <a href={props.leaveURL}>
-            <button>Продолжить</button>
+            <button className="finish">Продолжить</button>
           </a>
         </section>
       </div>

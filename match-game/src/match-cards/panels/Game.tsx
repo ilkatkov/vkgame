@@ -7,7 +7,7 @@ import {
   PanelHeader,
   Title,
 } from "@vkontakte/vkui";
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect } from "react";
 
 import "./Game.css";
 import { ActivePanel } from "../Index";
@@ -21,6 +21,7 @@ type Props = {
   id: string;
   go: (panelName: ActivePanel) => void;
   gameData: GameData | null;
+  setPopout: React.Dispatch<React.SetStateAction<ReactNode>>;
 };
 
 const Game: React.FC<Props> = ({ go, gameData }) => {

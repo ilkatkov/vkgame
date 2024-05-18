@@ -99,7 +99,7 @@ h1 + p {
   gap: 20px;
 }
 
-button {
+button.classic {
   -webkit-transition: all 0.1s ease;
   -moz-transition: all 0.1s ease;
   -o-transition: all 0.1s ease;
@@ -140,7 +140,7 @@ button {
   color: #ffffff !important;
 }
 
-button:active {
+button.classic:active {
   background: #dedede !important;
 }
 

@@ -12,6 +12,7 @@ export type GameData = {
     term: string;
     description: string;
   }[];
+  rounds: number | null;
   matchCards: {
     imageURL: string;
     name: string;
