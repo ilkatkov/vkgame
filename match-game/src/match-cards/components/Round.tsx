@@ -17,7 +17,13 @@ export default function Round(props: Props) {
   const [totalRounds, round, setRound] = useContext(RoundContext);
   const pointsState = useState<number>(0);
   const [cardsThisRound, setCardsThisRound] = useState<number>(
-    round == 1 ? 4 : round == 2 ? 6 : 8
+    totalRounds == 1
+      ? props.matchCards.length
+      : round == 1
+      ? 4
+      : round == 2
+      ? 6
+      : 8
   );
   const [relevantCards, setRelevantCards] = useState<typeof props.matchCards>(
     props.matchCards.slice(0, cardsThisRound)
