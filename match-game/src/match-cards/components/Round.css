@@ -1,0 +1,12 @@
+.round-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.round-buttons > * {
+  width: min-content;
+}
+
+#black-round-button {
+  color: black !important;
+}

@@ -1,0 +1,14 @@
+@font-face {
+  font-family: "VK Sans Display Regular";
+  src: url(../../fonts/VKSansDisplay-Regular.ttf);
+}
+
+@font-face {
+  font-family: "VK Sans Display DemiBold";
+  src: url(../../fonts/VKSansDisplay-DemiBold.ttf);
+}
+
+@font-face {
+  font-family: "VK Sans Display Medium";
+  src: url(../../fonts/VKSansDisplay-Medium.ttf);
+}

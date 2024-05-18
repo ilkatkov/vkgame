@@ -122,20 +122,18 @@ export default function Tutorial({ go, gameData }: Props) {
       <div id="page">
         <section className="cardsBox">
           <div className="words">
-            <div className="wordCard"></div>
-            <div className="wordCard"></div>
-            <div className="wordCard"></div>
-            <div className="wordCard"></div>
-            <div className="wordCard"></div>
-            <div className="wordCard"></div>
+            {gameData?.classicCards.map(() => (
+              <div className="wordCard"></div>
+            ))}
           </div>
           <div className="cards">
-            <div className="descCard pink tutorialCard glowing"></div>
-            <div className="descCard blue"></div>
-            <div className="descCard violet"></div>
-            <div className="descCard pink"></div>
-            <div className="descCard blue"></div>
-            <div className="descCard violet"></div>
+            {gameData?.classicCards.map((_, index) => (
+              <div
+                className={`descCard ${["pink", "blue", "violet"][index % 3]} ${
+                  index == 0 && "tutorialCard glowing"
+                }`}
+              ></div>
+            ))}
           </div>
         </section>
         <div className="popup__bg">

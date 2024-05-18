@@ -1,0 +1,17 @@
+.matchgame-wrapper {
+  flex: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.rounds-count {
+  text-align: center;
+  padding-top: 30px;
+}

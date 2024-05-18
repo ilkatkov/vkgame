@@ -1,4 +1,16 @@
 .game__footer {
+  position: absolute;
+  bottom: 0px;
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
+}
+
+.game__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.game__theme {
+  padding: 24px;
 }

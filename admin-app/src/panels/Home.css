@@ -1,12 +1,4 @@
-@font-face {
-  font-family: "VK Sans Display Regular";
-  src: url(../../fonts/VKSansDisplay-Regular.ttf);
-}
-
-@font-face {
-  font-family: "VK Sans Display DemiBold";
-  src: url(../../fonts/VKSansDisplay-DemiBold.ttf);
-}
+@import url(./common.css);
 
 .cardslogo {
   margin-left: 55px;
@@ -120,4 +112,8 @@
   font-size: 16px;
   cursor: pointer;
   align-items: center;
+}
+
+.disabled {
+  color: #86befec3 !important;
 }

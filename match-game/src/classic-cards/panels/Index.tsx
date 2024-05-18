@@ -18,7 +18,9 @@ export default function Index({ go, welcomeTitle, welcomeBody }: Props) {
             <h1>{welcomeTitle}</h1>
             <p>{welcomeBody}</p>
           </div>
-          <button onClick={() => go("tutorial")}>Поехали!</button>
+          <button className="classic" onClick={() => go("tutorial")}>
+            Поехали!
+          </button>
         </section>
       </div>
     </>

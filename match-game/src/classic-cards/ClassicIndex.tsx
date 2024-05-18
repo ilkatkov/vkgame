@@ -1,5 +1,3 @@
-import "./style.css";
-import "./popup.css";
 import { View } from "@vkontakte/vkui";
 import { useState } from "react";
 import Finish from "./panels/Finish";

@@ -1,0 +1,48 @@
+.matchimage-wrapper {
+  background-size: contain;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.matchimage-wrapper--hidden {
+  background-image: none;
+}
+
+.matchimage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3); */
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.matchimage--hidden {
+  filter: brightness(0) invert(0.9);
+}
+
+/* .matchimage--revealed {
+  filter: unset;
+} */
+
+@keyframes matched {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.matchimage--matched {
+  filter: grayscale(80%);
+  animation: matched 1s ease 0.5s 1 normal forwards;
+}
